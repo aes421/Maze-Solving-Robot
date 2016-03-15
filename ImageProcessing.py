@@ -3,16 +3,22 @@ import numpy as np
 import cv2
 
 #import the image
-image = cv2.imread("PaintersTape.jpg")
+image = cv2.imread("Paint.png")
 
-#code the colors to recognize
+#code the colors to recognize [B, G. R]
 boundaries = [
-	([17, 15, 100], [50, 56, 200]),
-	([86, 31, 4], [220, 88, 50]),
-	([25, 146, 190], [62, 174, 250]),
+	#white
+	([215, 215, 215], [255, 255, 255]),
 
-	
-	([103, 86, 65], [145, 133, 128])
+	#red
+	([0,0,100], [100,100,255]),
+
+	#blue
+	([115,0,0], [255,100,100]),
+
+	#green
+	([0,115,0], [100,255,100])
+
 ]
 
 # loop over the boundaries
