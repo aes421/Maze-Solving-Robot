@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 #import the image
-image = cv2.imread("Paint.png")
+image = cv2.imread("PaintMaze.png")
 
 #code the colors to recognize [B, G. R]
 boundaries = [
