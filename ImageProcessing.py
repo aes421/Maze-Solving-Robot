@@ -11,13 +11,13 @@ boundaries = [
 	([215, 215, 215], [255, 255, 255]),
 
 	#red
-	([0,0,100], [100,100,255]),
+	#([0,0,100], [100,100,255]),
 
 	#blue
-	([115,0,0], [255,100,100]),
+	#([115,0,0], [255,100,100]),
 
 	#green
-	([0,115,0], [100,255,100])
+	#([0,115,0], [100,255,100])
 
 ]
 
@@ -26,6 +26,19 @@ for (lower, upper) in boundaries:
 	# create NumPy arrays from the boundaries
 	lower = np.array(lower, dtype = "uint8")
 	upper = np.array(upper, dtype = "uint8")
+
+	#Create adjacency matrix
+	#34 W 42 H
+	col_counter = 0
+	row_counter = 0
+
+	#Source to use: http://www.shogun-toolbox.org/static/notebook/current/Sudoku_recognizer.html
+
+	'''for row in xrange(110, 435, 34):
+		for column in xrange(110, 520, 42):
+			col_counter += 1
+			cv2.putText(image, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,0))
+		row_counter += 1'''
  
 	# find the colors within the specified boundaries and apply
 	# the mask
@@ -34,3 +47,6 @@ for (lower, upper) in boundaries:
 
 	cv2.imshow("images", np.hstack([image, output]))
 	cv2.waitKey(0)
+
+
+
