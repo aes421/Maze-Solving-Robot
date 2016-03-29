@@ -18,9 +18,7 @@ def extract_cells(grid):
 		M = cv2.moments(contours[count])
 		row = int(M['m10']/M['m00'])
 		column = int(M['m01']/M['m00'])
-		#row = contours[count][0]
-		#column = contours[count][1]
-		#cv2.putText(image_gray, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+		cv2.putText(grid, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 		cv2.drawContours(grid, contours, count, (255,255,255), 1)
 		count += 1
 	cv2.imshow("test", grid)
