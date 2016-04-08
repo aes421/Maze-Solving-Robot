@@ -14,15 +14,20 @@ def extract_cells(grid):
 	#convert to gray
 	image_gray = cv2.cvtColor(grid, cv2.COLOR_BGR2GRAY)
 	#creates a binary image from the gray scale image to use as input for findContours()
-	thresh = cv2.adaptiveThreshold(image_gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY_INV,11,15)
+	#thresh = cv2.adaptiveThreshold(image_gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY_INV,11,15)
 
 	#Find countors
-	tempimg, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+	tempimg, contours, hierarchy = cv2.findContours(image_gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 	
 
 	#draw all countours
 	count = 0
 	max_size = 0
+	matrix = [] 
+	new_contours = []
+	grid_contour = 0
+	grid_contour_row = None
+	grid_contour_column = None
 	for each in enumerate(contours):
 		
 		#used to find the midpoint of each cell
@@ -33,28 +38,40 @@ def extract_cells(grid):
 		#find biggest box (this is the grid itself, so needs to be removed since it is not a cell)
 		size = cv2.contourArea(contours[count])
 		if (size > max_size):
-			max_size = size
+			new_contours.append(contours[grid_contour])
+			#put a marker in each cell for testing
+			if (grid_contour_row != None and grid_contour_column != None):
+				cv2.putText(grid, "0", (grid_contour_row, grid_contour_column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 			grid_contour = count
+			grid_contour_row = row
+			grid_contour_column = column
+		else:
+			new_contours.append(contours[count])
+			#put a marker in each cell for testing
+			cv2.putText(grid, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 
-		#put a marker in each cell for testing
-		cv2.putText(grid, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 		
+		
+		matrix = create_matrix(matrix,count)
 		count += 1
 
 	#draw white lines showing contours
-	cv2.drawContours(grid, contours, -1, (255,255,255))
+	
+	cv2.drawContours(grid, new_contours, -1, (255,255,255))
+	print (matrix)
 
 
 	cv2.imshow("test", grid)
 	cv2.waitKey(0)
 	return contours
 
-def create_matrix(c,image):
+def create_matrix(matrix, count):
 	#if color red (from colorlist) if in between c's x,y coordinates
 		#put 0 in matrix
 	#else
 		#put 1 in matrix
-	return
+	matrix.append(count)
+	return matrix
 
 
 #This function takes an image and a list of colors, it then individually segments out
@@ -105,7 +122,7 @@ image = cv2.imread("minimaze.png")
 
 grid = identify_colors(image, "blue")
 c = extract_cells(grid)
-#create_matrix(c, image)
+
 
 
 
