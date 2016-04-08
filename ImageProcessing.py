@@ -59,26 +59,33 @@ def extract_cells(grid):
 		count += 1
 
 	#draw white lines showing contours
+	cv2.drawContours(grid, new_contours, -1, (255,255,255))
+
+
+	#approx contains x,y coordinates for the 4 corners of the cell
+	approx = cv2.approxPolyDP(contours[0],0.01*cv2.arcLength(contours[0],True),True)
 	
 
-	cv2.drawContours(grid, new_contours, 0, (255,255,255))
-
-	approx = cv2.approxPolyDP(contours[0],0.01*cv2.arcLength(contours[0],True),True)
-	print (approx)
 	cv2.imshow("test", grid)
 	cv2.waitKey(0)
-	return new_contours
+	return new_contours, approx
 
-def create_matrix(contours):
-	#if color red (from colorlist) if in between c's x,y coordinates
+def create_matrix(contours, approx):
+	#if color red (from colorlist) is in between c's x,y coordinates
 		#put 0 in matrix
 	#else
 		#put 1 in matrix
+
+	#o = identify_colors(approx, "red")
 	templist = []
 	matrix = []
 	count = 0
+	mask = np.zeros((ROWNUM,COLNUM))
+
 	for each in enumerate(contours):
 
+		x,y,w,h = cv2.boundingRect(contours[count])
+		rect = cv2.rectangle(image, (x,y), (x+w,y+h), (0,255,0), 2)
 
 		if (count > COLNUM - 1):
 			matrix.append(templist)
@@ -134,12 +141,11 @@ def identify_colors(image, *colors):
 
 
 #import the image
-image = cv2.imread("minimaze.png")
-
+image = cv2.imread("PaintMaze.png")
 
 grid = identify_colors(image, "blue")
-c = extract_cells(grid)
-matrix = create_matrix(c)
+c, approx = extract_cells(grid)
+matrix = create_matrix(c,approx)
 
 
 
