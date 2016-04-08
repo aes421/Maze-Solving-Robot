@@ -108,6 +108,7 @@ def identify_colors(image, *colors):
 		#show the photos side by side
 		#cv2.imshow("images", np.hstack([image, output]))
 		#cv2.waitKey(0)
+		
 	return output
 	
 
