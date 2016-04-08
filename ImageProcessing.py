@@ -2,6 +2,9 @@
 import numpy as np
 import cv2
 
+ROWNUM = 2
+COLNUM = 2
+
 '''Extreme points 
 leftmost = tuple(cnt[cnt[:,:,0].argmin()][0])
 rightmost = tuple(cnt[cnt[:,:,0].argmax()][0])
@@ -52,25 +55,34 @@ def extract_cells(grid):
 
 		
 		
-		matrix = create_matrix(matrix,count)
+		#matrix = create_matrix(matrix,count)
 		count += 1
 
 	#draw white lines showing contours
 	
 	cv2.drawContours(grid, new_contours, -1, (255,255,255))
-	print (matrix)
 
 
 	cv2.imshow("test", grid)
 	cv2.waitKey(0)
-	return contours
+	return new_contours
 
-def create_matrix(matrix, count):
+def create_matrix(contours):
 	#if color red (from colorlist) if in between c's x,y coordinates
 		#put 0 in matrix
 	#else
 		#put 1 in matrix
-	matrix.append(count)
+	templist = []
+	matrix = []
+	count = 0
+	for each in enumerate(contours):
+		if (count > COLNUM - 1):
+			matrix.append(templist)
+			templist = []
+			count = 0
+		templist.append(0)
+		count += 1
+	print(matrix)
 	return matrix
 
 
@@ -123,6 +135,7 @@ image = cv2.imread("minimaze.png")
 
 grid = identify_colors(image, "blue")
 c = extract_cells(grid)
+matrix = create_matrix(c)
 
 
 
