@@ -10,27 +10,41 @@ bottommost = tuple(cnt[cnt[:,:,1].argmax()][0])'''
 
 
 def extract_cells(grid):
+
 	#convert to gray
-	image_gray = cv2.cvtColor(grid ,cv2.COLOR_BGR2GRAY)
-	thresh = cv2.adaptiveThreshold(image_gray,255,1,1,11,15)
+	image_gray = cv2.cvtColor(grid, cv2.COLOR_BGR2GRAY)
+	#creates a binary image from the gray scale image to use as input for findContours()
+	thresh = cv2.adaptiveThreshold(image_gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY_INV,11,15)
 
 	#Find countors
 	tempimg, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 	
+
 	#draw all countours
 	count = 0
+	max_size = 0
 	for each in enumerate(contours):
-		#Code to identify each cell
+		
+		#used to find the midpoint of each cell
 		M = cv2.moments(contours[count])
 		row = int(M['m10']/M['m00'])
 		column = int(M['m01']/M['m00'])
 
+		#find biggest box (this is the grid itself, so needs to be removed since it is not a cell)
+		size = cv2.contourArea(contours[count])
+		if (size > max_size):
+			max_size = size
+			grid_contour = count
 
-		#output image
-		#print count, ": ", row, column
+		#put a marker in each cell for testing
 		cv2.putText(grid, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
-		cv2.drawContours(grid, contours, count, (255,255,255), 1)
+		
 		count += 1
+
+	#draw white lines showing contours
+	cv2.drawContours(grid, contours, -1, (255,255,255))
+
+
 	cv2.imshow("test", grid)
 	cv2.waitKey(0)
 	return contours
@@ -45,7 +59,7 @@ def create_matrix(c,image):
 
 #This function takes an image and a list of colors, it then individually segments out
 #the specified colors meaning two colors specified will create two different output images.
-#Currently only the last color specified has its iamge returned
+#Currently only the last color specified has its image returned
 def identify_colors(image, *colors):
 
 	colorlist = []
