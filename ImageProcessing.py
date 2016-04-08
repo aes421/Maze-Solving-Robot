@@ -43,15 +43,15 @@ def extract_cells(grid):
 		if (size > max_size):
 			new_contours.append(contours[grid_contour])
 			#put a marker in each cell for testing
-			if (grid_contour_row != None and grid_contour_column != None):
-				cv2.putText(grid, "0", (grid_contour_row, grid_contour_column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+			#if (grid_contour_row != None and grid_contour_column != None):
+				#cv2.putText(grid, "0", (grid_contour_row, grid_contour_column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 			grid_contour = count
 			grid_contour_row = row
 			grid_contour_column = column
 		else:
 			new_contours.append(contours[count])
 			#put a marker in each cell for testing
-			cv2.putText(grid, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+			#cv2.putText(grid, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 
 		
 		
@@ -60,9 +60,11 @@ def extract_cells(grid):
 
 	#draw white lines showing contours
 	
-	cv2.drawContours(grid, new_contours, -1, (255,255,255))
 
+	cv2.drawContours(grid, new_contours, 0, (255,255,255))
 
+	approx = cv2.approxPolyDP(contours[0],0.01*cv2.arcLength(contours[0],True),True)
+	print (approx)
 	cv2.imshow("test", grid)
 	cv2.waitKey(0)
 	return new_contours
@@ -76,13 +78,15 @@ def create_matrix(contours):
 	matrix = []
 	count = 0
 	for each in enumerate(contours):
+
+
 		if (count > COLNUM - 1):
 			matrix.append(templist)
 			templist = []
 			count = 0
 		templist.append(0)
 		count += 1
-	print(matrix)
+
 	return matrix
 
 
