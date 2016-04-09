@@ -1,16 +1,14 @@
 #Source: http://www.pyimagesearch.com/2014/08/04/opencv-python-color-detection/
 import numpy as np
 import cv2
+from scipy import ndimage
+import pandas as pd
 
 ROWNUM = 2
 COLNUM = 2
 
-'''Extreme points 
-leftmost = tuple(cnt[cnt[:,:,0].argmin()][0])
-rightmost = tuple(cnt[cnt[:,:,0].argmax()][0])
-topmost = tuple(cnt[cnt[:,:,1].argmin()][0])
-bottommost = tuple(cnt[cnt[:,:,1].argmax()][0])'''
-
+def f(df):
+    return df.sort_values("x").reset_index(drop=True)
 
 def extract_cells(grid):
 
@@ -42,16 +40,12 @@ def extract_cells(grid):
 		size = cv2.contourArea(contours[count])
 		if (size > max_size):
 			new_contours.append(contours[grid_contour])
-			#put a marker in each cell for testing
-			#if (grid_contour_row != None and grid_contour_column != None):
-				#cv2.putText(grid, "0", (grid_contour_row, grid_contour_column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 			grid_contour = count
 			grid_contour_row = row
 			grid_contour_column = column
 		else:
 			new_contours.append(contours[count])
-			#put a marker in each cell for testing
-			#cv2.putText(grid, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+			
 
 		
 		
@@ -76,23 +70,35 @@ def create_matrix(contours, approx):
 	#else
 		#put 1 in matrix
 
-	#o = identify_colors(approx, "red")
-	templist = []
-	matrix = []
-	count = 0
-	mask = np.zeros((ROWNUM,COLNUM))
 
-	for each in enumerate(contours):
 
-		x,y,w,h = cv2.boundingRect(contours[count])
-		rect = cv2.rectangle(image, (x,y), (x+w,y+h), (0,255,0), 2)
+	red_mask = identify_colors(image, "red")
+	blue = np.array([200, 70, 60])
+	red = np.array([30, 20, 220])
 
-		if (count > COLNUM - 1):
-			matrix.append(templist)
-			templist = []
-			count = 0
-		templist.append(0)
-		count += 1
+	isblue = cv2.inRange(image, blue, blue+20)
+	isred = cv2.inRange(image, red, red+20) > 0
+
+	labels, count = ndimage.label(~isblue)
+
+	loc = np.where(labels >= 2) #label 1 is the border
+
+	# to get the location, we need to sort the block along yaxis and xaxis
+	df = pd.DataFrame({"y":loc[0], "x":loc[1], "label":labels[loc], "isred":isred[loc]})
+
+	grid = df.groupby("label").mean().sort_values("y")
+
+	res = grid.groupby((grid.y.diff().fillna(0) > 10).cumsum()).apply(f)
+
+	print((res.isred.unstack(1) > 0).astype(np.uint8))
+
+
+
+		#if (count > COLNUM - 1):
+		#	matrix.append(templist)
+		#	templist = []
+		#	count = 0
+		#templist.append(0)
 
 	return matrix
 
@@ -128,11 +134,21 @@ def identify_colors(image, *colors):
 		#converts that specified range back to its orginal color
 		output = cv2.bitwise_and(image, image, mask = mask)
 
+		# Remove outer black area Source: http://stackoverflow.com/questions/36508001/determining-if-a-color-is-within-a-contour-opencv
+		flooded = image.copy()
+		x = 5
+		y = 5
+		flooded = output.copy()
+		h, w = output.shape[:2]
+		mask = np.zeros((h+2, w+2), np.uint8)
+		mask[:] = 0
+		cv2.floodFill(flooded,mask,(x,y),(255,)*3, (40,)*3, (40,)*3, 4 )
+
 		#show the photos side by side
-		#cv2.imshow("images", np.hstack([image, output]))
+		#cv2.imshow("images", np.hstack([image, flooded]))
 		#cv2.waitKey(0)
 		
-	return output
+	return flooded
 	
 
 
@@ -141,7 +157,7 @@ def identify_colors(image, *colors):
 
 
 #import the image
-image = cv2.imread("PaintMaze.png")
+image = cv2.imread("minimaze.png")
 
 grid = identify_colors(image, "blue")
 c, approx = extract_cells(grid)
