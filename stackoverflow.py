@@ -54,7 +54,7 @@ blue_mask = cv2.morphologyEx(blue_mask, cv2.MORPH_CLOSE, kernel)
 
 # Find outer contour, and fill area outside
 cnt_grid = cv2.findContours(blue_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[0]
-#assert(len(cnt_grid) == 1)
+assert(len(cnt_grid) == 1)
 grid_area = np.zeros_like(blue_mask)
 cv2.drawContours(grid_area, cnt_grid, 0, 255, -1)
 grid_tiles = cv2.bitwise_and(cv2.bitwise_not(blue_mask), grid_area)

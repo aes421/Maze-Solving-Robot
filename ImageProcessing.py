@@ -7,8 +7,21 @@ import pandas as pd
 ROWNUM = 2
 COLNUM = 2
 
-def f(df):
-    return df.sort_values("x").reset_index(drop=True)
+def centroid(contour):
+    x,y,w,h = cv2.boundingRect(contour)
+    return (y+h/2.0, x+w/2.0)
+
+def contains_red(red_mask, tile):
+    tile_area = np.zeros_like(red_mask)
+    cv2.drawContours(tile_area, [tile[1]], 0, 255, -1)
+    red_tile_area = cv2.bitwise_and(tile_area, red_mask)
+    return (cv2.countNonZero(red_tile_area))
+
+def get_transform(grid_size, grid_contour):
+    x,y,w,h = cv2.boundingRect(grid_contour)
+    tile_w = float(w) / (grid_size[0])
+    tile_h = float(h)/ (grid_size[1])
+    return ((-y - tile_h/2, -x - tile_w/2), (1/tile_h, 1/tile_w))
 
 def extract_cells(grid):
 
@@ -60,8 +73,8 @@ def extract_cells(grid):
 	approx = cv2.approxPolyDP(contours[0],0.01*cv2.arcLength(contours[0],True),True)
 	
 
-	cv2.imshow("test", grid)
-	cv2.waitKey(0)
+	#cv2.imshow("test", grid)
+	#cv2.waitKey(0)
 	return new_contours, approx
 
 def create_matrix(contours, approx):
@@ -71,26 +84,31 @@ def create_matrix(contours, approx):
 		#put 1 in matrix
 
 
+	red_mask, red = identify_colors(image, "red")
+	blue_mask, blue = identify_colors(image, "blue")
+	grid_area = np.zeros_like(blue_mask)
+	grid_tiles = cv2.bitwise_and(cv2.bitwise_not(blue_mask), grid_area)
 
-	red_mask = identify_colors(image, "red")
-	blue = np.array([200, 70, 60])
-	red = np.array([30, 20, 220])
 
-	isblue = cv2.inRange(image, blue, blue+20)
-	isred = cv2.inRange(image, red, red+20) > 0
+	isblue = cv2.inRange(image, np.array(blue[0][0]), np.array(blue[0][1]))
+	isred = cv2.inRange(image, np.array(red[0][0]), np.array(red[0][1])) > 0
 
-	labels, count = ndimage.label(~isblue)
+	# Find scaling parameters
+	offset, scale = get_transform((ROWNUM, COLNUM), contours[0])
 
-	loc = np.where(labels >= 2) #label 1 is the border
+	tiles = [[centroid(contour), contour, False] for contour in contours]
+	for tile in tiles:
+    	# Rescale centroid
+		tile[0] = (int(round((tile[0][0] + offset[0]) * scale[0])), int(round((tile[0][1] + offset[1]) * scale[1])))
+    	tile[2] = contains_red(red_mask, tile)
 
-	# to get the location, we need to sort the block along yaxis and xaxis
-	df = pd.DataFrame({"y":loc[0], "x":loc[1], "label":labels[loc], "isred":isred[loc]})
+	# Sort the tiles
+	tiles = sorted(tiles, key=lambda x: x[0], reverse=False)
 
-	grid = df.groupby("label").mean().sort_values("y")
+	# Extract the results
+	result = np.array([int(t[2]) for t in tiles])
 
-	res = grid.groupby((grid.y.diff().fillna(0) > 10).cumsum()).apply(f)
-
-	print((res.isred.unstack(1) > 0).astype(np.uint8))
+	print result.reshape(ROWNUM,COLNUM)
 
 
 
@@ -100,7 +118,7 @@ def create_matrix(contours, approx):
 		#	count = 0
 		#templist.append(0)
 
-	return matrix
+	return 0
 
 
 #This function takes an image and a list of colors, it then individually segments out
@@ -148,7 +166,7 @@ def identify_colors(image, *colors):
 		#cv2.imshow("images", np.hstack([image, flooded]))
 		#cv2.waitKey(0)
 		
-	return flooded
+	return flooded, colorlist
 	
 
 
@@ -159,7 +177,7 @@ def identify_colors(image, *colors):
 #import the image
 image = cv2.imread("minimaze.png")
 
-grid = identify_colors(image, "blue")
+grid, blue = identify_colors(image, "blue")
 c, approx = extract_cells(grid)
 matrix = create_matrix(c,approx)
 
