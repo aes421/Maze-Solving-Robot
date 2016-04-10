@@ -120,6 +120,32 @@ def create_matrix(contours, approx):
 
 	return 0
 
+			#put a marker in each cell for testing
+			cv2.putText(grid, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+
+		
+		
+		matrix = create_matrix(matrix,count)
+		count += 1
+
+	#draw white lines showing contours
+	
+	cv2.drawContours(grid, new_contours, -1, (255,255,255))
+	print (matrix)
+
+
+	cv2.imshow("test", grid)
+	cv2.waitKey(0)
+	return contours
+
+def create_matrix(matrix, count):
+	#if color red (from colorlist) if in between c's x,y coordinates
+		#put 0 in matrix
+	#else
+		#put 1 in matrix
+	matrix.append(count)
+	return matrix
+
 
 #This function takes an image and a list of colors, it then individually segments out
 #the specified colors meaning two colors specified will create two different output images.
@@ -180,7 +206,6 @@ image = cv2.imread("minimaze.png")
 grid, blue = identify_colors(image, "blue")
 c, approx = extract_cells(grid)
 matrix = create_matrix(c,approx)
-
 
 
 
