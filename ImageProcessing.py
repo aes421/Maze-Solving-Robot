@@ -36,8 +36,7 @@ def extract_cells(grid):
 
 	#draw all countours
 	count = 0
-	max_size = 0
-	matrix = [] 
+	max_size = 0 
 	new_contours = []
 	grid_contour = 0
 	grid_contour_row = None
@@ -58,11 +57,6 @@ def extract_cells(grid):
 			grid_contour_column = column
 		else:
 			new_contours.append(contours[count])
-			
-
-		
-		
-		#matrix = create_matrix(matrix,count)
 		count += 1
 
 	#draw white lines showing contours
@@ -73,8 +67,8 @@ def extract_cells(grid):
 	approx = cv2.approxPolyDP(contours[0],0.01*cv2.arcLength(contours[0],True),True)
 	
 
-	#cv2.imshow("test", grid)
-	#cv2.waitKey(0)
+	cv2.imshow("test", grid)
+	cv2.waitKey(0)
 	return new_contours, approx
 
 def create_matrix(contours, approx):
@@ -86,7 +80,7 @@ def create_matrix(contours, approx):
 
 	red_mask, red = identify_colors(image, "red")
 	blue_mask, blue = identify_colors(image, "blue")
-	grid_area = np.zeros_like(blue_mask)
+	'''grid_area = np.zeros_like(blue_mask)
 	grid_tiles = cv2.bitwise_and(cv2.bitwise_not(blue_mask), grid_area)
 
 
@@ -108,7 +102,7 @@ def create_matrix(contours, approx):
 	# Extract the results
 	result = np.array([int(t[2]) for t in tiles])
 
-	print result.reshape(ROWNUM,COLNUM)
+	print result.reshape(ROWNUM,COLNUM)'''
 
 
 
@@ -163,8 +157,8 @@ def identify_colors(image, *colors):
 		cv2.floodFill(flooded,mask,(x,y),(255,)*3, (40,)*3, (40,)*3, 4 )
 
 		#show the photos side by side
-		cv2.imshow("images", np.hstack([image, flooded]))
-		cv2.waitKey(0)
+		#cv2.imshow("images", np.hstack([image, flooded]))
+		#cv2.waitKey(0)
 		
 	return flooded, colorlist
 	
