@@ -1,13 +1,27 @@
 #Source: http://www.pyimagesearch.com/2014/08/04/opencv-python-color-detection/
 import numpy as np
 import cv2
+from scipy import ndimage
+import pandas as pd
 
-'''Extreme points 
-leftmost = tuple(cnt[cnt[:,:,0].argmin()][0])
-rightmost = tuple(cnt[cnt[:,:,0].argmax()][0])
-topmost = tuple(cnt[cnt[:,:,1].argmin()][0])
-bottommost = tuple(cnt[cnt[:,:,1].argmax()][0])'''
+ROWNUM = 2
+COLNUM = 2
 
+def centroid(contour):
+    x,y,w,h = cv2.boundingRect(contour)
+    return (y+h/2.0, x+w/2.0)
+
+def contains_red(red_mask, tile):
+    tile_area = np.zeros_like(red_mask)
+    cv2.drawContours(tile_area, [tile[1]], 0, 255, -1)
+    red_tile_area = cv2.bitwise_and(tile_area, red_mask)
+    return (cv2.countNonZero(red_tile_area))
+
+def get_transform(grid_size, grid_contour):
+    x,y,w,h = cv2.boundingRect(grid_contour)
+    tile_w = float(w) / (grid_size[0])
+    tile_h = float(h)/ (grid_size[1])
+    return ((-y - tile_h/2, -x - tile_w/2), (1/tile_h, 1/tile_w))
 
 def extract_cells(grid):
 
@@ -39,14 +53,73 @@ def extract_cells(grid):
 		size = cv2.contourArea(contours[count])
 		if (size > max_size):
 			new_contours.append(contours[grid_contour])
-			#put a marker in each cell for testing
-			if (grid_contour_row != None and grid_contour_column != None):
-				cv2.putText(grid, "0", (grid_contour_row, grid_contour_column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 			grid_contour = count
 			grid_contour_row = row
 			grid_contour_column = column
 		else:
 			new_contours.append(contours[count])
+			
+
+		
+		
+		#matrix = create_matrix(matrix,count)
+		count += 1
+
+	#draw white lines showing contours
+	cv2.drawContours(grid, new_contours, -1, (255,255,255))
+
+
+	#approx contains x,y coordinates for the 4 corners of the cell
+	approx = cv2.approxPolyDP(contours[0],0.01*cv2.arcLength(contours[0],True),True)
+	
+
+	#cv2.imshow("test", grid)
+	#cv2.waitKey(0)
+	return new_contours, approx
+
+def create_matrix(contours, approx):
+	#if color red (from colorlist) is in between c's x,y coordinates
+		#put 0 in matrix
+	#else
+		#put 1 in matrix
+
+
+	red_mask, red = identify_colors(image, "red")
+	blue_mask, blue = identify_colors(image, "blue")
+	grid_area = np.zeros_like(blue_mask)
+	grid_tiles = cv2.bitwise_and(cv2.bitwise_not(blue_mask), grid_area)
+
+
+	isblue = cv2.inRange(image, np.array(blue[0][0]), np.array(blue[0][1]))
+	isred = cv2.inRange(image, np.array(red[0][0]), np.array(red[0][1])) > 0
+
+	# Find scaling parameters
+	offset, scale = get_transform((ROWNUM, COLNUM), contours[0])
+
+	tiles = [[centroid(contour), contour, False] for contour in contours]
+	for tile in tiles:
+    	# Rescale centroid
+		tile[0] = (int(round((tile[0][0] + offset[0]) * scale[0])), int(round((tile[0][1] + offset[1]) * scale[1])))
+    	tile[2] = contains_red(red_mask, tile)
+
+	# Sort the tiles
+	tiles = sorted(tiles, key=lambda x: x[0], reverse=False)
+
+	# Extract the results
+	result = np.array([int(t[2]) for t in tiles])
+
+	print result.reshape(ROWNUM,COLNUM)
+
+
+
+		#if (count > COLNUM - 1):
+		#	matrix.append(templist)
+		#	templist = []
+		#	count = 0
+		#templist.append(0)
+
+	return 0
+
 			#put a marker in each cell for testing
 			cv2.putText(grid, "0", (row, column), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 
@@ -105,10 +178,21 @@ def identify_colors(image, *colors):
 		#converts that specified range back to its orginal color
 		output = cv2.bitwise_and(image, image, mask = mask)
 
+		# Remove outer black area Source: http://stackoverflow.com/questions/36508001/determining-if-a-color-is-within-a-contour-opencv
+		flooded = image.copy()
+		x = 5
+		y = 5
+		flooded = output.copy()
+		h, w = output.shape[:2]
+		mask = np.zeros((h+2, w+2), np.uint8)
+		mask[:] = 0
+		cv2.floodFill(flooded,mask,(x,y),(255,)*3, (40,)*3, (40,)*3, 4 )
+
 		#show the photos side by side
-		#cv2.imshow("images", np.hstack([image, output]))
+		#cv2.imshow("images", np.hstack([image, flooded]))
 		#cv2.waitKey(0)
-	return output
+		
+	return flooded, colorlist
 	
 
 
@@ -119,10 +203,9 @@ def identify_colors(image, *colors):
 #import the image
 image = cv2.imread("minimaze.png")
 
-
-grid = identify_colors(image, "blue")
-c = extract_cells(grid)
-
+grid, blue = identify_colors(image, "blue")
+c, approx = extract_cells(grid)
+matrix = create_matrix(c,approx)
 
 
 
