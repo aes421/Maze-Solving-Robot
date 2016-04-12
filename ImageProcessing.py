@@ -6,8 +6,8 @@ import pandas as pd
 import copy
 
 
-ROWNUM = 11
-COLNUM = 11
+ROWNUM = 3
+COLNUM = 2
 
 TOP_LEFT = 0
 TOP_RIGHT = 1
@@ -88,7 +88,7 @@ def pretty_print(m):
 
 
 
-def create_matrix(contours, approx):
+def create_matrix(approx):
 	#if color red (from colorlist) is in between c's x,y coordinates
 		#put 0 in matrix
 	#else
@@ -102,7 +102,7 @@ def create_matrix(contours, approx):
 	
 	matrix = []
 	matrix_row = [] 
-	for each in range(len(contours)):
+	for each in range(len(approx)):
 		#print "contour ", each, ": Top left - ", approx[each][TOP_LEFT][0], "Bottom right - ", approx[each][BOTTOM_RIGHT][0]
 		found_red= False
 		#these loop uses contansts to help readability
@@ -187,13 +187,13 @@ def identify_colors(image, *colors):
 
 
 #import the image
-image = cv2.imread("PaintMaze.png")
+image = cv2.imread("smallmaze.png")
 
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
 c, approx = extract_cells(grid)
 approx = sort_contours(approx)
-m = create_matrix(c,approx)
+m = create_matrix(approx)
 pretty_print(m)
 
 
