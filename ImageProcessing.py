@@ -4,8 +4,8 @@ import cv2
 from scipy import ndimage
 import pandas as pd
 
-ROWNUM = 2
-COLNUM = 2
+ROWNUM = 11
+COLNUM = 11
 
 TOP_LEFT = 0
 TOP_RIGHT = 1
@@ -13,8 +13,8 @@ BOTTOM_RIGHT = 2
 BOTTOM_LEFT = 3
 
 
-X_POS = 0
-Y_POS = 1
+X_POS = 1
+Y_POS = 0
 
 '''def centroid(contour):
     x,y,w,h = cv2.boundingRect(contour)
@@ -83,6 +83,16 @@ def extract_cells(grid):
 	#cv2.waitKey(0)
 	return new_contours, approx
 
+
+
+def pretty_print(m):
+	for i in range(len(m)):
+		print m[i]
+		print
+
+
+
+
 def create_matrix(contours, approx):
 	#if color red (from colorlist) is in between c's x,y coordinates
 		#put 0 in matrix
@@ -94,48 +104,55 @@ def create_matrix(contours, approx):
 	#36,28,237 = red
 
 	width, height = image.shape[:2]
-	print (width, height)
-	print (approx)
+	#print (width, height)
+	#print (approx)
 	
 
-	each = 0
-	#for each in range(len(contours)):
+	
+	matrix = []
+	matrix_row = [] 
+	count = 0
+	for each in range(len(contours)):
+		found_red= False
 		#these loop uses contansts to help readability
-	print ("y values between: ",approx[each][TOP_LEFT][0][Y_POS], "-", approx[each][BOTTOM_RIGHT][0][Y_POS])
-	print ("x values between: ",approx[each][TOP_LEFT][0][X_POS], "-", approx[each][BOTTOM_RIGHT][0][X_POS])
-	for y in range(approx[each][TOP_LEFT][0][Y_POS], approx[each][BOTTOM_RIGHT][0][Y_POS]):
-		for x in range(approx[each][TOP_LEFT][0][X_POS], approx[each][BOTTOM_RIGHT][0][X_POS]):
-			pixel = image[x,y]
+		#print "Contour ", each, ": y values between: ",approx[each][TOP_LEFT][0][Y_POS], "-", approx[each][BOTTOM_RIGHT][0][Y_POS]
+		#print "x values between: ",approx[each][TOP_LEFT][0][X_POS], "-", approx[each][BOTTOM_RIGHT][0][X_POS], "\n"
+		
+		#probably don't have to check every single pixel... skip a few to speed loop up
+		for y in range(approx[each][TOP_LEFT][0][Y_POS], approx[each][BOTTOM_RIGHT][0][Y_POS]):
+			for x in range(approx[each][TOP_LEFT][0][X_POS], approx[each][BOTTOM_RIGHT][0][X_POS]):
+				pixel = image[x,y]
 				#if pixel is between the values of lower and upper it is red!
-				#if (pixel[0] == 36 and pixel[1] == 28 and pixel[2] == 237):
-					#print "(", x, ",", y, ") is red "
-				#print"(x,y) = ", x, ",", y, "=", pixel
+				if (pixel[0] == 36 and pixel[1] == 28 and pixel[2] == 237):
+					print (count)
+					count += 1
+					matrix_row.append(1)
+					found_red = True
+					break
+			if (len(matrix_row) >= ROWNUM):
+				matrix.append(matrix_row)
+				matrix_row = []
+			if (found_red == True):
+				break
+			elif (y+1 == approx[each][BOTTOM_RIGHT][0][Y_POS] and found_red == False):
+				matrix_row.append(0)
 
-	red_mask, red = identify_colors(image, "red")
-	blue_mask, blue = identify_colors(image, "blue")
+
+	#print (matrix)
+	return matrix
+
+	
+
+
+	#red_mask, red = identify_colors(image, "red")
+	#blue_mask, blue = identify_colors(image, "blue")
 	#grid_area = np.zeros_like(blue_mask)
 	#grid_tiles = cv2.bitwise_and(cv2.bitwise_not(blue_mask), grid_area)
 
 
-	isblue = cv2.inRange(image, np.array(blue[0][0]), np.array(blue[0][1]))
-	isred = cv2.inRange(image, np.array(red[0][0]), np.array(red[0][1])) > 0
+	#isblue = cv2.inRange(image, np.array(blue[0][0]), np.array(blue[0][1]))
+	#isred = cv2.inRange(image, np.array(red[0][0]), np.array(red[0][1])) > 0
 
-	'''# Find scaling parameters
-	offset, scale = get_transform((ROWNUM, COLNUM), contours[0])
-
-	tiles = [[centroid(contour), contour, False] for contour in contours]
-	for tile in tiles:
-    	# Rescale centroid
-		tile[0] = (int(round((tile[0][0] + offset[0]) * scale[0])), int(round((tile[0][1] + offset[1]) * scale[1])))
-    	tile[2] = contains_red(red_mask, tile)
-
-	# Sort the tiles
-	tiles = sorted(tiles, key=lambda x: x[0], reverse=False)
-
-	# Extract the results
-	result = np.array([int(t[2]) for t in tiles])
-
-	print result.reshape(ROWNUM,COLNUM)'''
 
 
 
@@ -202,12 +219,13 @@ def identify_colors(image, *colors):
 
 
 #import the image
-image = cv2.imread("minimaze.png")
+image = cv2.imread("PaintMaze.png")
 
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
 c, approx = extract_cells(grid)
-create_matrix(c,approx)
+m = create_matrix(c,approx)
+pretty_print(m)
 
 
 
