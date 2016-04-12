@@ -3,6 +3,8 @@ import numpy as np
 import cv2
 from scipy import ndimage
 import pandas as pd
+import copy
+
 
 ROWNUM = 11
 COLNUM = 11
@@ -15,22 +17,6 @@ BOTTOM_LEFT = 3
 
 X_POS = 1
 Y_POS = 0
-
-'''def centroid(contour):
-    x,y,w,h = cv2.boundingRect(contour)
-    return (y+h/2.0, x+w/2.0)
-
-def contains_red(red_mask, tile):
-    tile_area = np.zeros_like(red_mask)
-    cv2.drawContours(tile_area, [tile[1]], 0, 255, -1)
-    red_tile_area = cv2.bitwise_and(tile_area, red_mask)
-    return (cv2.countNonZero(red_tile_area))
-
-def get_transform(grid_size, grid_contour):
-    x,y,w,h = cv2.boundingRect(grid_contour)
-    tile_w = float(w) / (grid_size[0])
-    tile_h = float(h)/ (grid_size[1])
-    return ((-y - tile_h/2, -x - tile_w/2), (1/tile_h, 1/tile_w))'''
 
 def extract_cells(grid):
 
@@ -84,6 +70,15 @@ def extract_cells(grid):
 	return new_contours, approx
 
 
+def sort_contours(c):
+
+	sorted_list = copy.deepcopy(c)
+
+	sorted_list.sort(key=lambda x: x[0][0][0])
+	sorted_list.sort(key=lambda x: x[0][0][1])
+
+	return sorted_list
+
 
 def pretty_print(m):
 	for i in range(len(m)):
@@ -103,16 +98,12 @@ def create_matrix(contours, approx):
 	#x = 105 y =173
 	#36,28,237 = red
 
-	width, height = image.shape[:2]
-	#print (width, height)
-	#print (approx)
-	
-
+	#width, height = image.shape[:2]
 	
 	matrix = []
 	matrix_row = [] 
-	count = 0
 	for each in range(len(contours)):
+		#print "contour ", each, ": Top left - ", approx[each][TOP_LEFT][0], "Bottom right - ", approx[each][BOTTOM_RIGHT][0]
 		found_red= False
 		#these loop uses contansts to help readability
 		#print "Contour ", each, ": y values between: ",approx[each][TOP_LEFT][0][Y_POS], "-", approx[each][BOTTOM_RIGHT][0][Y_POS]
@@ -124,43 +115,20 @@ def create_matrix(contours, approx):
 				pixel = image[x,y]
 				#if pixel is between the values of lower and upper it is red!
 				if (pixel[0] == 36 and pixel[1] == 28 and pixel[2] == 237):
-					print (count)
-					count += 1
 					matrix_row.append(1)
 					found_red = True
 					break
-			if (len(matrix_row) >= ROWNUM):
+
+
+			if (y+1 == approx[each][BOTTOM_RIGHT][0][Y_POS] and found_red == False):
+				matrix_row.append(0)		
+			if (len(matrix_row) >= COLNUM):
 				matrix.append(matrix_row)
 				matrix_row = []
 			if (found_red == True):
 				break
-			elif (y+1 == approx[each][BOTTOM_RIGHT][0][Y_POS] and found_red == False):
-				matrix_row.append(0)
-
-
-	#print (matrix)
+			
 	return matrix
-
-	
-
-
-	#red_mask, red = identify_colors(image, "red")
-	#blue_mask, blue = identify_colors(image, "blue")
-	#grid_area = np.zeros_like(blue_mask)
-	#grid_tiles = cv2.bitwise_and(cv2.bitwise_not(blue_mask), grid_area)
-
-
-	#isblue = cv2.inRange(image, np.array(blue[0][0]), np.array(blue[0][1]))
-	#isred = cv2.inRange(image, np.array(red[0][0]), np.array(red[0][1])) > 0
-
-
-
-
-		#if (count > COLNUM - 1):
-		#	matrix.append(templist)
-		#	templist = []
-		#	count = 0
-		#templist.append(0)
 
 		
 
@@ -224,6 +192,7 @@ image = cv2.imread("PaintMaze.png")
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
 c, approx = extract_cells(grid)
+approx = sort_contours(approx)
 m = create_matrix(c,approx)
 pretty_print(m)
 
