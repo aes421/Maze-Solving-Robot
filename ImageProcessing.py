@@ -7,7 +7,7 @@ import pandas as pd
 ROWNUM = 2
 COLNUM = 2
 
-def centroid(contour):
+'''def centroid(contour):
     x,y,w,h = cv2.boundingRect(contour)
     return (y+h/2.0, x+w/2.0)
 
@@ -21,7 +21,7 @@ def get_transform(grid_size, grid_contour):
     x,y,w,h = cv2.boundingRect(grid_contour)
     tile_w = float(w) / (grid_size[0])
     tile_h = float(h)/ (grid_size[1])
-    return ((-y - tile_h/2, -x - tile_w/2), (1/tile_h, 1/tile_w))
+    return ((-y - tile_h/2, -x - tile_w/2), (1/tile_h, 1/tile_w))'''
 
 def extract_cells(grid):
 
@@ -38,7 +38,7 @@ def extract_cells(grid):
 	count = 0
 	max_size = 0 
 	new_contours = []
-	grid_contour = 0
+	previous_contour = 0
 	grid_contour_row = None
 	grid_contour_column = None
 	for each in enumerate(contours):
@@ -51,10 +51,12 @@ def extract_cells(grid):
 		#find biggest box (this is the grid itself, so needs to be removed since it is not a cell)
 		size = cv2.contourArea(contours[count])
 		if (size > max_size):
-			new_contours.append(contours[grid_contour])
-			grid_contour = count
+			if (max_size != 0):
+				new_contours.append(contours[previous_contour])
+			previous_contour = count
 			grid_contour_row = row
 			grid_contour_column = column
+			max_size = size
 		else:
 			new_contours.append(contours[count])
 		count += 1
@@ -63,12 +65,13 @@ def extract_cells(grid):
 	cv2.drawContours(grid, new_contours, -1, (255,255,255))
 
 
-	#approx contains x,y coordinates for the 4 corners of the cell
-	approx = cv2.approxPolyDP(contours[0],0.01*cv2.arcLength(contours[0],True),True)
-	
+	#approx contains x,y coordinates for the 4 corners of the cella
+	approx = []
+	for each in range(len(new_contours)):
+		approx.append(cv2.approxPolyDP(new_contours[each],0.01*cv2.arcLength(new_contours[each],True),True))
 
-	cv2.imshow("test", grid)
-	cv2.waitKey(0)
+	#cv2.imshow("test", grid)
+	#cv2.waitKey(0)
 	return new_contours, approx
 
 def create_matrix(contours, approx):
@@ -76,18 +79,28 @@ def create_matrix(contours, approx):
 		#put 0 in matrix
 	#else
 		#put 1 in matrix
+	print approx
+	#x = 12 y = 9
+	#x = 105 y =173
 
+	lower = [0,0,100]
+	upper = [100,100,255]
+	for x in range(12,105):
+		for y in range(9,114):
+			pixel = image[x,y]
+			#if pixel is between the values of lower and upper it is red!
+			#print"(x,y) = ", x, ",", y, "=", image[x,y]
 
 	red_mask, red = identify_colors(image, "red")
 	blue_mask, blue = identify_colors(image, "blue")
-	'''grid_area = np.zeros_like(blue_mask)
-	grid_tiles = cv2.bitwise_and(cv2.bitwise_not(blue_mask), grid_area)
+	#grid_area = np.zeros_like(blue_mask)
+	#grid_tiles = cv2.bitwise_and(cv2.bitwise_not(blue_mask), grid_area)
 
 
 	isblue = cv2.inRange(image, np.array(blue[0][0]), np.array(blue[0][1]))
 	isred = cv2.inRange(image, np.array(red[0][0]), np.array(red[0][1])) > 0
 
-	# Find scaling parameters
+	'''# Find scaling parameters
 	offset, scale = get_transform((ROWNUM, COLNUM), contours[0])
 
 	tiles = [[centroid(contour), contour, False] for contour in contours]
@@ -171,6 +184,7 @@ def identify_colors(image, *colors):
 #import the image
 image = cv2.imread("minimaze.png")
 
+#print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
 c, approx = extract_cells(grid)
 create_matrix(c,approx)
