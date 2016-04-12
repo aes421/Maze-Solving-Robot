@@ -7,6 +7,15 @@ import pandas as pd
 ROWNUM = 2
 COLNUM = 2
 
+TOP_LEFT = 0
+TOP_RIGHT = 1
+BOTTOM_RIGHT = 2
+BOTTOM_LEFT = 3
+
+
+X_POS = 0
+Y_POS = 1
+
 '''def centroid(contour):
     x,y,w,h = cv2.boundingRect(contour)
     return (y+h/2.0, x+w/2.0)
@@ -79,17 +88,28 @@ def create_matrix(contours, approx):
 		#put 0 in matrix
 	#else
 		#put 1 in matrix
-	print approx
+	#print approx
 	#x = 12 y = 9
 	#x = 105 y =173
+	#36,28,237 = red
 
-	lower = [0,0,100]
-	upper = [100,100,255]
-	for x in range(12,105):
-		for y in range(9,114):
+	width, height = image.shape[:2]
+	print (width, height)
+	print (approx)
+	
+
+	each = 0
+	#for each in range(len(contours)):
+		#these loop uses contansts to help readability
+	print ("y values between: ",approx[each][TOP_LEFT][0][Y_POS], "-", approx[each][BOTTOM_RIGHT][0][Y_POS])
+	print ("x values between: ",approx[each][TOP_LEFT][0][X_POS], "-", approx[each][BOTTOM_RIGHT][0][X_POS])
+	for y in range(approx[each][TOP_LEFT][0][Y_POS], approx[each][BOTTOM_RIGHT][0][Y_POS]):
+		for x in range(approx[each][TOP_LEFT][0][X_POS], approx[each][BOTTOM_RIGHT][0][X_POS]):
 			pixel = image[x,y]
-			#if pixel is between the values of lower and upper it is red!
-			#print"(x,y) = ", x, ",", y, "=", image[x,y]
+				#if pixel is between the values of lower and upper it is red!
+				#if (pixel[0] == 36 and pixel[1] == 28 and pixel[2] == 237):
+					#print "(", x, ",", y, ") is red "
+				#print"(x,y) = ", x, ",", y, "=", pixel
 
 	red_mask, red = identify_colors(image, "red")
 	blue_mask, blue = identify_colors(image, "blue")
