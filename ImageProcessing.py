@@ -6,8 +6,8 @@ import pandas as pd
 import copy
 
 
-ROWNUM = 3
-COLNUM = 2
+ROWNUM = 8
+COLNUM = 8
 
 TOP_LEFT = 0
 TOP_RIGHT = 1
@@ -105,6 +105,7 @@ def create_matrix(approx):
 	for each in range(len(approx)):
 		#print "contour ", each, ": Top left - ", approx[each][TOP_LEFT][0], "Bottom right - ", approx[each][BOTTOM_RIGHT][0]
 		found_red= False
+		found_green = False
 		#these loop uses contansts to help readability
 		#print "Contour ", each, ": y values between: ",approx[each][TOP_LEFT][0][Y_POS], "-", approx[each][BOTTOM_RIGHT][0][Y_POS]
 		#print "x values between: ",approx[each][TOP_LEFT][0][X_POS], "-", approx[each][BOTTOM_RIGHT][0][X_POS], "\n"
@@ -118,14 +119,18 @@ def create_matrix(approx):
 					matrix_row.append(1)
 					found_red = True
 					break
+				if (pixel[0] == 29 and pixel[1] == 230 and pixel[2] == 181):
+					matrix_row.append(2)
+					found_green = True
+					break
 
 
-			if (y+1 == approx[each][BOTTOM_RIGHT][0][Y_POS] and found_red == False):
+			if (y+1 == approx[each][BOTTOM_RIGHT][0][Y_POS] and found_red == False and found_green == False):
 				matrix_row.append(0)		
 			if (len(matrix_row) >= COLNUM):
 				matrix.append(matrix_row)
 				matrix_row = []
-			if (found_red == True):
+			if (found_red == True or found_green == True):
 				break
 			
 	return matrix
@@ -187,7 +192,7 @@ def identify_colors(image, *colors):
 
 
 #import the image
-image = cv2.imread("smallmaze.png")
+image = cv2.imread("BradTest.png")
 
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
