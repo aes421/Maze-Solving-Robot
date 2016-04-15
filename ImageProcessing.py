@@ -61,8 +61,8 @@ def extract_cells(grid):
 	for each in range(len(new_contours)):
 		approx.append(cv2.approxPolyDP(new_contours[each],0.01*cv2.arcLength(new_contours[each],True),True))
 
-	#cv2.imshow("test", grid)
-	#cv2.waitKey(0)
+	cv2.imshow("test", grid)
+	cv2.waitKey(0)
 	return new_contours, approx
 
 
@@ -98,8 +98,13 @@ def create_matrix(approx):
 		if (approx[each][BOTTOM_RIGHT][0][Y_POS] not in col_list):
 			col_list.append(approx[each][BOTTOM_RIGHT][0][Y_POS])
 
+	ROWNUM = len(row_list)
+	COLNUM = len(col_list)
+
 	print (ROWNUM)
 	print (COLNUM)
+
+
 	
 	matrix = []
 	matrix_row = [] 
