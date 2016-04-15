@@ -5,10 +5,6 @@ from scipy import ndimage
 import pandas as pd
 import copy
 
-
-ROWNUM = 8
-COLNUM = 8
-
 TOP_LEFT = 0
 TOP_RIGHT = 1
 BOTTOM_RIGHT = 2
@@ -93,12 +89,17 @@ def create_matrix(approx):
 		#put 0 in matrix
 	#else
 		#put 1 in matrix
-	#print approx
-	#x = 12 y = 9
-	#x = 105 y =173
-	#36,28,237 = red
 
+	row_list = []
+	col_list = []
+	for each in range(len(approx)):
+		if (approx[each][BOTTOM_RIGHT][0][X_POS] not in row_list):
+			row_list.append(approx[each][BOTTOM_RIGHT][0][X_POS])
+		if (approx[each][BOTTOM_RIGHT][0][Y_POS] not in col_list):
+			col_list.append(approx[each][BOTTOM_RIGHT][0][Y_POS])
 
+	print (ROWNUM)
+	print (COLNUM)
 	
 	matrix = []
 	matrix_row = [] 
