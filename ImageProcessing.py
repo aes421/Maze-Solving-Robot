@@ -98,7 +98,7 @@ def create_matrix(approx):
 	#x = 105 y =173
 	#36,28,237 = red
 
-	#width, height = image.shape[:2]
+
 	
 	matrix = []
 	matrix_row = [] 
@@ -137,12 +137,7 @@ def create_matrix(approx):
 
 		
 
-
-#This function takes an image and a list of colors, it then individually segments out
-#the specified colors meaning two colors specified will create two different output images.
-#Currently only the last color specified has its image returned
-def identify_colors(image, *colors):
-
+def create_colorlist(colors):
 	colorlist = []
 	#Add RGB values for each color specified when the function was called
 	#to the list colorlist
@@ -156,6 +151,14 @@ def identify_colors(image, *colors):
 	if "green" in colors:
 		colorlist.append(([0,115,0], [100,255,100]))
 
+	return colorlist
+#This function takes an image and a list of colors, it then individually segments out
+#the specified colors meaning two colors specified will create two different output images.
+#Currently only the last color specified has its image returned
+def identify_colors(image, color):
+
+	
+	colorlist = create_colorlist(color)
 	#loop over the colorlist
 	for (lower, upper) in colorlist:
 		# create NumPy arrays from the colorlist
