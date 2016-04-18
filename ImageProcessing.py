@@ -101,9 +101,6 @@ def create_matrix(approx):
 	ROWNUM = len(row_list)
 	COLNUM = len(col_list)
 
-	print (ROWNUM)
-	print (COLNUM)
-
 
 	
 	matrix = []
@@ -201,7 +198,7 @@ def identify_colors(image, color):
 
 
 #import the image
-image = cv2.imread("BradTest.png")
+image = cv2.imread("WIN_20160418_12_26_40_Pro.jpg")
 
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
