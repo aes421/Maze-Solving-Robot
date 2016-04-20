@@ -198,11 +198,8 @@ def identify_colors(image, color):
 
 
 #import the image
-<<<<<<< HEAD
-image = cv2.imread("WIN_20160415_11_49_16_Pro.jpg")
-=======
+
 image = cv2.imread("Snapshot_20160418.png")
->>>>>>> origin/master
 
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
