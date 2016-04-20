@@ -146,7 +146,7 @@ def create_colorlist(colors):
 	#to the list colorlist
 
 	if "blue" in colors:
-		colorlist.append(([115,0,0], [255,100,100]))
+		colorlist.append(([100,0,0], [255,100,100]))
 	if "white" in colors:
 		colorlist.append(([215, 215, 215], [255, 255, 255]))
 	if "red" in colors:
@@ -198,7 +198,11 @@ def identify_colors(image, color):
 
 
 #import the image
+<<<<<<< HEAD
 image = cv2.imread("WIN_20160415_11_49_16_Pro.jpg")
+=======
+image = cv2.imread("Snapshot_20160418.png")
+>>>>>>> origin/master
 
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
