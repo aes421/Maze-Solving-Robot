@@ -198,7 +198,7 @@ def identify_colors(image, color):
 
 
 #import the image
-image = cv2.imread("WIN_20160418_12_26_40_Pro.jpg")
+image = cv2.imread("WIN_20160415_11_49_16_Pro.jpg")
 
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
