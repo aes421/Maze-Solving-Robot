@@ -61,7 +61,7 @@ def extract_cells(grid):
 	for each in range(len(new_contours)):
 		approx.append(cv2.approxPolyDP(new_contours[each],0.01*cv2.arcLength(new_contours[each],True),True))
 
-	cv2.imshow("test", grid)
+	#cv2.imshow("test", grid)
 	cv2.waitKey(0)
 	return new_contours, approx
 
@@ -114,7 +114,7 @@ def create_matrix(approx):
 		#print "x values between: ",approx[each][TOP_LEFT][0][X_POS], "-", approx[each][BOTTOM_RIGHT][0][X_POS], "\n"
 		
 		#probably don't have to check every single pixel... skip a few to speed loop up
-		for y in range(approx[each][TOP_LEFT][0][Y_POS], approx[each][BOTTOM_RIGHT][0][Y_POS]):
+		for y in range(approx[each][TOP_LEFT][0][Y_POS], approx[each][BOTTOM_RIGHT][0][Y_POS], 10):
 			for x in range(approx[each][TOP_LEFT][0][X_POS], approx[each][BOTTOM_RIGHT][0][X_POS]):
 				pixel = image[x,y]
 				#if pixel is between the values of lower and upper it is red!
@@ -199,7 +199,7 @@ def identify_colors(image, color):
 
 #import the image
 
-image = cv2.imread("Snapshot_20160418.png")
+image = cv2.imread("BradTest.png")
 
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
