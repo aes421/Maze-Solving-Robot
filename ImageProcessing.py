@@ -4,6 +4,7 @@ import cv2
 from scipy import ndimage
 import pandas as pd
 import copy
+import sys
 
 TOP_LEFT = 0
 TOP_RIGHT = 1
@@ -198,8 +199,8 @@ def identify_colors(image, color):
 
 
 #import the image
-
-image = cv2.imread("BradTest.png")
+image_name = sys.argv[1]
+image = cv2.imread(image_name)
 
 #print (image[243, 140])
 grid, blue = identify_colors(image, "blue")
