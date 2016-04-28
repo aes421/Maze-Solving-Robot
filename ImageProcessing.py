@@ -5,6 +5,8 @@ from scipy import ndimage
 import pandas as pd
 import copy
 import sys
+import time
+
 
 TOP_LEFT = 0
 TOP_RIGHT = 1
@@ -205,7 +207,7 @@ def identify_colors(image, color):
 
 
 
-
+start = time.time()
 #import the image
 image_name = sys.argv[1]
 image = cv2.imread(image_name)
@@ -216,6 +218,9 @@ c, approx = extract_cells(grid)
 approx = sort_contours(approx)
 m = create_matrix(approx, colorlist)
 pretty_print(m)
+end = time.time()
+
+print (end - start)
 
 
 
