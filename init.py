@@ -26,6 +26,10 @@ def generate_image(matrix, image_name):
 
 	img.save("launch/"+str(image_name))
 
+def get_random_grid_cell(matrix):
+	matrix_width = len(matrix[0])
+	matrix_height = len(matrix)
+
 
 def write_world_file(matrix, sim_name):
 
