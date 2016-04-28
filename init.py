@@ -1,4 +1,5 @@
 import sys
+import os.path
 import Image
 import subprocess
 import pickle
@@ -63,7 +64,15 @@ def write_world_file(matrix, sim_name):
 		ros_pos_x = goal[1] - int(matrix_width/2)
 		ros_pos_y = int(matrix_height/2) - goal[0]
 
-		f.write('block (pose ['+str(ros_pos_x)+' '+str(ros_pos_y)+' 5 0] color "green")')
+		if matrix_width %2 == 0:
+			ros_pos_x += 0.5
+
+		if matrix_height % 2 == 0:
+			ros_pos_y -= 0.5
+
+		block = 'block (pose ['+str(ros_pos_x*2)+' '+str(ros_pos_y*2)+' 5 0] color "green")'
+		print(block +" for : "+str(goal))
+		f.write(block)
 
 	f.close()
 
@@ -71,13 +80,18 @@ def write_world_file(matrix, sim_name):
 	generate_image(matrix, image_name)
 
 
+def write_matrix_to_pickle(matrix, name_of_simulation):
+	path_file = open("launch/maze.pkl",'wb')
+	pickle.dump(matrix,path_file)
+	path_file.close()
+
+
+
 if __name__ == '__main__':
 
 	if len(sys.argv) != 3:
 		sys.exit("Expecting 2 arguments (Name of Simulation, Maze Image name), but instead recieved "+str(len(sys.argv))+": "+str(sys.argv))
-		
-
-	print(sys.argv)
+	
 
 	name_of_simulation = sys.argv[1]
 	name_of_maze_file = sys.argv[2]
@@ -85,14 +99,15 @@ if __name__ == '__main__':
 	print("Extracting Information From Maze Image")
 
 	# Grab a matrix using ashley's code
-	sample_matrix = imgmain(name_of_maze_file)
+	matrix = imgmain(name_of_maze_file)
 
 	print("Image successfuly parsed!")
 
 	# Build a world file from the matrix
-	write_world_file(sample_matrix, name_of_simulation)
+	write_world_file(matrix, name_of_simulation)
 
 	# Save our maze to a pickle for our ros to use.
+	write_matrix_to_pickle(matrix, name_of_simulation)
 
 	print("Starting Ross...")
 	subprocess.call(["roslaunch MazeSolvingRobot simulation.launch"], shell=True)

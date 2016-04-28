@@ -6,11 +6,13 @@ from nav_msgs.msg import *
 from tf.transformations import euler_from_quaternion
 import math
 from glue import *
+import os
 
 #####################
 # BEGIN Global Variable Definitions
 robot = [0,0,0]
 laser_scan = None
+maze_map = None
 # END Global Variable Definitions
 #####################+
 
@@ -231,12 +233,16 @@ def get_pf_magnitude_constant(distance):
 # This is the main loop of the lab code.  It runs continuously, navigating our robot
 # (hopefully) towards the goal, without hitting any obstacles
 def potential():
+    
+
     rospy.init_node('lab2', anonymous=True) #Initialize the ros node
     pub = rospy.Publisher('cmd_vel', Twist) #Create our publisher to send drive commands to the robot
     rospy.Subscriber("base_scan", LaserScan, laser_callback) #Subscribe to the laser scan topic
     rospy.Subscriber("base_pose_ground_truth", Odometry, robot_callback) #Subscribe to the robot pose topic
 
-    rate = rospy.Rate(10) #10 Hz    
+    rate = rospy.Rate(10) #10 Hz   
+
+    
     
     while not rospy.is_shutdown():
         
@@ -263,7 +269,14 @@ def potential():
     pub.publish(twist)
 
 if __name__ == '__main__':
+
+    global maze_map
+    path_file = open("maze.pkl",'rb')
+    maze_map = pickle.load(path_file)
+    path_file.close()
+
     try:
+        print("REAL PATH: "+os.path.realpath(__file__))
         potential()
     except rospy.ROSInterruptException:
         pass

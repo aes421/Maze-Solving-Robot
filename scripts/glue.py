@@ -57,11 +57,12 @@ def get_cell_based_on_posiiton(x, y):
 	your current position
 	'''
 
+	# THIS NEEDS TO BE CHANGED
 	map_dimension = [16, 16]
 
 	cell = (int((map_dimension[0]/2 +x)/2), int((map_dimension[1]/2 -y)/2))
 
-	print "Where we think we are: " + str(cell)+", from: ("+str(x)+", "+str(y)+")"
+	#print "Where we think we are: " + str(cell)+", from: ("+str(x)+", "+str(y)+")"
 
 	return cell
 
@@ -89,6 +90,7 @@ def get_attractive_force_based_on_position(matrix, x, y):
 	if cell_to_move_towards is None:
 		return [x,y]
 
+	# THIS NEEDS TO BE CHANGED
 	map_dimension = [16, 16]
 
 	return ((cell_to_move_towards[0]*2)-(map_dimension[0]/2), (cell_to_move_towards[1]*2)-(map_dimension[1]/2))
