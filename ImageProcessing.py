@@ -87,7 +87,7 @@ def pretty_print(m):
 
 
 
-def create_matrix(approx, colorlist):
+def create_matrix(approx, colorlist, image):
 	#if color red (from colorlist) is in between c's x,y coordinates
 		#put 0 in matrix
 	#else
@@ -206,21 +206,25 @@ def identify_colors(image, color):
 
 
 
+def main(image_name):
+	#start = time.time()
+	#import the image
+	image = cv2.imread(image_name)
 
-start = time.time()
-#import the image
+	#print (image[243, 140])
+	grid, colorlist = identify_colors(image, "blue")
+	c, approx = extract_cells(grid)
+	approx = sort_contours(approx)
+	m = create_matrix(approx, colorlist, image)
+	pretty_print(m)
+	#end = time.time()
+
+	#print (end - start)
+	return m
+
+
 image_name = sys.argv[1]
-image = cv2.imread(image_name)
-
-#print (image[243, 140])
-grid, colorlist = identify_colors(image, "blue")
-c, approx = extract_cells(grid)
-approx = sort_contours(approx)
-m = create_matrix(approx, colorlist)
-pretty_print(m)
-end = time.time()
-
-print (end - start)
+main(image_name)
 
 
 
