@@ -1,6 +1,8 @@
 #Source: http://www.pyimagesearch.com/2014/08/04/opencv-python-color-detection/
 import numpy as np
 import cv2
+from scipy import ndimage
+import pandas as pd
 import copy
 import sys
 import time
@@ -23,7 +25,7 @@ def extract_cells(grid):
 	#thresh = cv2.adaptiveThreshold(image_gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY_INV,11,15)
 
 	#Find countors
-	contours, hierarchy = cv2.findContours(image_gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+	tempimg, contours, hierarchy = cv2.findContours(image_gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 	
 
 	#draw all countours
@@ -207,9 +209,6 @@ def identify_colors(image, color):
 def main(image_name):
 	#start = time.time()
 	#import the image
-
-
-	print("image name: "+image_name)
 	image = cv2.imread(image_name)
 
 	#print (image[243, 140])
@@ -224,9 +223,8 @@ def main(image_name):
 	return m
 
 
-if __name__ == '__main__':
-	image_name = sys.argv[1]
-	main(image_name)
+image_name = sys.argv[1]
+main(image_name)
 
 
 

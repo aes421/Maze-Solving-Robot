@@ -31,7 +31,7 @@ define map model
 map
 (
   name "Halp"
-  size [16 16 0.5]
+  size [26 32 0.5]
   pose [0 0 0 0]
   bitmap "Halp_maze.png"
 )
