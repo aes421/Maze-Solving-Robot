@@ -4,7 +4,7 @@ interval_sim 100 # simulation timestep in milliseconds
 
 window
 ( 
-  size [ 600.000 600.000 ] 
+  size [ 800.000 800.000 ] 
   scale 35.00 
 )
 

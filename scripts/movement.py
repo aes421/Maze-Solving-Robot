@@ -102,9 +102,10 @@ def goal_force( ):
         
     #This is the robot's actual global location, set in robot_callback
     global robot #format [x_position, y_position, yaw]
+    global maze_map
 
     #Hard coded goal location for this lab [DO NOT CHANGE!]
-    goal_location = get_attractive_force_based_on_position(get_map_matrix(), robot[0],robot[1])
+    goal_location = get_attractive_force_based_on_position(maze_map, robot[0],robot[1])
 
     #####################################################
     #PARAMETERS : MODIFY TO GET ROBOT TO MOVE EFFECTIVELY
@@ -234,6 +235,8 @@ def get_pf_magnitude_constant(distance):
 # (hopefully) towards the goal, without hitting any obstacles
 def potential():
     
+    global maze_map
+    maze_map = get_map_matrix()
 
     rospy.init_node('lab2', anonymous=True) #Initialize the ros node
     pub = rospy.Publisher('cmd_vel', Twist) #Create our publisher to send drive commands to the robot
@@ -241,8 +244,6 @@ def potential():
     rospy.Subscriber("base_pose_ground_truth", Odometry, robot_callback) #Subscribe to the robot pose topic
 
     rate = rospy.Rate(10) #10 Hz   
-
-    
     
     while not rospy.is_shutdown():
         
@@ -270,13 +271,7 @@ def potential():
 
 if __name__ == '__main__':
 
-    global maze_map
-    path_file = open("maze.pkl",'rb')
-    maze_map = pickle.load(path_file)
-    path_file.close()
-
     try:
-        print("REAL PATH: "+os.path.realpath(__file__))
         potential()
     except rospy.ROSInterruptException:
         pass

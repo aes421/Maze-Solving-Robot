@@ -4,6 +4,7 @@ import Image
 import subprocess
 import pickle
 from ImageProcessing import main as imgmain
+from random import randint
 
 def draw_square(pixels, x, y, w, h, c):
 
@@ -28,6 +29,11 @@ def generate_image(matrix, image_name):
 	img.save("launch/"+str(image_name))
 
 def get_random_grid_cell(matrix):
+
+	'''
+	Returns a random empty grid cell
+	'''
+
 	count = 0
 	check = 0
 
@@ -37,7 +43,7 @@ def get_random_grid_cell(matrix):
 			if matrix[row][col] == 1:
 				count += 1
 
-	r = randint(0, count)
+	r = randint(0, count-1)
 
 	for row in range(len(matrix)):
 		for col in range(len(matrix[row])):
@@ -46,7 +52,24 @@ def get_random_grid_cell(matrix):
 				rand_row = row
 				rand_col = col
 
+	return (rand_col, rand_row)
 
+
+def matrix_to_world_coord(width, height, col, row):
+
+	ros_pos_x = col - int(width/2)
+	ros_pos_y = int(height/2) - row
+
+	if width %2 == 0:
+		ros_pos_x += 0.5
+
+	if height % 2 == 0:
+		ros_pos_y -= 0.5
+
+	ros_pos_x *= 2
+	ros_pos_y *= 2
+
+	return (ros_pos_x, ros_pos_y)
 
 def write_world_file(matrix, sim_name):
 
@@ -77,18 +100,15 @@ def write_world_file(matrix, sim_name):
 	# If we actually found a goal
 	if goal != None:
 
-		ros_pos_x = goal[1] - int(matrix_width/2)
-		ros_pos_y = int(matrix_height/2) - goal[0]
+		pos = matrix_to_world_coord(matrix_width, matrix_height, goal[1], goal[0])
 
-		if matrix_width %2 == 0:
-			ros_pos_x += 0.5
-
-		if matrix_height % 2 == 0:
-			ros_pos_y -= 0.5
-
-		block = 'block (pose ['+str(ros_pos_x*2)+' '+str(ros_pos_y*2)+' 5 0] color "green")'
-		print(block +" for : "+str(goal))
+		block = 'block (pose ['+str(pos[0])+' '+str(pos[1])+' 5 0] color "green")\n'
+		#print(block +" for : "+str(goal))
 		f.write(block)
+
+	rnd_cell = get_random_grid_cell(matrix)
+	spawn_pos = matrix_to_world_coord(matrix_width, matrix_height, rnd_cell[0], rnd_cell[1])
+	f.write('turtlebot( pose ['+str(spawn_pos[0])+' '+str(spawn_pos[1])+' 0 180] color "red")')
 
 	f.close()
 
@@ -97,7 +117,7 @@ def write_world_file(matrix, sim_name):
 
 
 def write_matrix_to_pickle(matrix, name_of_simulation):
-	path_file = open("launch/maze.pkl",'wb')
+	path_file = open("scripts/maze.pkl",'wb')
 	pickle.dump(matrix,path_file)
 	path_file.close()
 
@@ -127,4 +147,4 @@ if __name__ == '__main__':
 
 	print("Starting Ross...")
 	subprocess.call(["roslaunch MazeSolvingRobot simulation.launch"], shell=True)
-	print("Ross Started!")
+	print("Ross Has Ended!")
