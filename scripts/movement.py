@@ -184,10 +184,10 @@ def get_pf_magnitude_linear(distance):
     #PARAMETERS: MODIFY TO GET THINGS WORKING EFFECTIVELY
         
     #How close to the obstacle do we have to be to begin feeling repulsive force
-    distance_threshold = .9
+    distance_threshold = .8
 
     #The maximum strength of the repulsive force
-    max_strength = 1.0
+    max_strength = 0.7
 
     #END OF PARAMETERS
     #####################################################
@@ -215,10 +215,10 @@ def get_pf_magnitude_constant(distance):
     #PARAMETERS: MODIFY TO GET THINGS WORKING EFFECTIVELY
         
     #How close to the obstacle do we have to be to begin feeling repulsive force
-    distance_threshold = 1.0 
+    distance_threshold = 7.0 
 
     #Strength of the repulsive force
-    strength = 1.0
+    strength = 0.9
 
     #END OF PARAMETERS
     #####################################################
