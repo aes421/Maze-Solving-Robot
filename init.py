@@ -27,8 +27,24 @@ def generate_image(matrix, image_name):
 	img.save("launch/"+str(image_name))
 
 def get_random_grid_cell(matrix):
-	matrix_width = len(matrix[0])
-	matrix_height = len(matrix)
+	count = 0
+	check = 0
+
+	for row in range(len(matrix)):
+		for col in range(len(matrix[row])):
+
+			if matrix[row][col] == 1:
+				count += 1
+
+	r = randint(0, count)
+
+	for row in range(len(matrix)):
+		for col in range(len(matrix[row])):
+			check += 1
+			if check == r:
+				rand_row = row
+				rand_col = col
+
 
 
 def write_world_file(matrix, sim_name):
