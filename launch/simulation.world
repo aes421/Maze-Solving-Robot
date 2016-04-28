@@ -30,10 +30,10 @@ define map model
 
 map
 (
-  name "testar"
+  name "Halp"
   size [16 16 0.5]
   pose [0 0 0 0]
-  bitmap "testar_maze.png"
+  bitmap "Halp_maze.png"
 )
 
 define hokuyo ranger

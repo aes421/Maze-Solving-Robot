@@ -1,5 +1,7 @@
 import sys
 import Image
+import subprocess
+from ImageProcessing.py import main as imgmain
 
 def draw_square(pixels, x, y, w, h):
 
@@ -72,7 +74,13 @@ if __name__ == '__main__':
 		[0,0,1,0,0,0,0,0]
 	]
 
+	sample_matrix = imgmain(name_of_maze_file)
+
 	print("Image successfuly parsed!")
 
 	# Build a world file from the matrix
 	write_world_file(sample_matrix, name_of_simulation)
+
+	print("Starting Ross...")
+	subprocess.call(["roslaunch MazeSolvingRobot sample.launch"], shell=True)
+	print("Ross Started!")
