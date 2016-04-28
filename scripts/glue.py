@@ -12,19 +12,6 @@ goal_representaiton = 2
 def get_map_matrix():
 
 	# This will eventually be replaced with image processing code of maze
-	'''
-	sample_matrix = [
-		[0,0,0,1,0,1,1,0],
-		[1,1,1,1,0,0,1,0],
-		[0,1,0,0,0,0,1,0],
-		[0,1,0,2,1,1,1,0],
-		[0,1,1,1,1,0,1,0],
-		[0,0,1,0,0,0,1,1],
-		[0,0,1,1,0,0,0,0],
-		[0,0,1,0,0,0,0,0]
-	]
-	'''
-
 	mypath = os.path.dirname(os.path.abspath(__file__))
 	#onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath,f))]
 	#print("EVERYTHING IN DIRECTORY: ("+str(mypath)+")"+ str(onlyfiles))
@@ -59,7 +46,7 @@ def get_goal_in_matrix(matrix):
 
 			if matrix[h][w] is goal_representaiton:
 
-				return (w+1,h+1)
+				return (w,h)
 
 
 
@@ -70,14 +57,79 @@ def get_cell_based_on_posiiton(matrix, x, y):
 	your current position
 	'''
 
-	# THIS NEEDS TO BE CHANGED
+	'''
+	ros_pos_x = col - int(width/2)
+	ros_pos_y = int(height/2) - row
+
+	if width %2 == 0:
+		
+		if ros_pos_x < 0 :
+			ros_pos_x += 0.5
+		
+
+	if height % 2 == 0:
+
+		ros_pos_y -= 0.5
+
+	ros_pos_x *= 2
+	ros_pos_y *= 2
+	'''
+
+	'''
 	map_dimension = [len(matrix[0]), len(matrix)]
 
-	cell = (int((map_dimension[0]/2 +x)/2), int((map_dimension[1]/2 -y)/2))
+	cell_x = int((int(map_dimension[0]/2) +x)/2)
+	cell_y = int((int(map_dimension[1]/2) -y)/2)
+
+	cell = (cell_x, cell_y)
+
+	print "Where we think we are: " + str(cell)+", from: ("+str(x)+", "+str(y)+")"
+	'''
+
+	width = len(matrix[0])
+	height = len(matrix)
+
+
+	cell_x = x/2.0
+	cell_y = y/2.0
+
+	if width % 2 == 0:
+		if cell_x < 0:
+			cell_x -= 0.5
+
+	if height % 2 == 0:
+		cell_y += 0.5
+
+	cell_x = int(cell_x + (width/2.0))
+	cell_y = int((height/2.0) - cell_y)
+
+	cell = (cell_x, cell_y)
 
 	print "Where we think we are: " + str(cell)+", from: ("+str(x)+", "+str(y)+")"
 
+
 	return cell
+
+
+def matrix_to_world_coord(width, height, col, row):
+
+	ros_pos_x = col - int(width/2)
+	ros_pos_y = int(height/2) - row
+
+	if width %2 == 0:
+		
+		if ros_pos_x < 0 :
+			ros_pos_x += 0.5
+		
+
+	if height % 2 == 0:
+
+		ros_pos_y -= 0.5
+
+	ros_pos_x *= 2
+	ros_pos_y *= 2
+
+	return (ros_pos_x, ros_pos_y)
 
 
 def get_next_cell_based_on_position(matrix, x, y):
@@ -92,7 +144,14 @@ def get_next_cell_based_on_position(matrix, x, y):
 	came_from, cost_sofar = a_star_search(matrix_to_graph(matrix), get_goal_in_matrix(matrix), cur_pos)
 
 	if cur_pos in came_from.keys():
+
+		print("Next Waypoint: "+str(came_from[cur_pos]))
+
 		return came_from[cur_pos]
+
+	print("Failure grabbing waypoint, defaulting: (0,0)")
+
+	print str(came_from)
 
 	return (0,0)
 
@@ -104,10 +163,9 @@ def get_attractive_force_based_on_position(matrix, x, y):
 	if cell_to_move_towards is None:
 		return [x,y]
 
-	# THIS NEEDS TO BE CHANGED
 	map_dimension = [len(matrix[0]), len(matrix)]
 
-	return ((cell_to_move_towards[0]*2)-(map_dimension[0]/2), (cell_to_move_towards[1]*2)-(map_dimension[1]/2))
+	return matrix_to_world_coord(map_dimension[0], map_dimension[1], cell_to_move_towards[0], cell_to_move_towards[1])
 
 
 def matrix_to_graph(matrix):

@@ -6,7 +6,6 @@ from nav_msgs.msg import *
 from tf.transformations import euler_from_quaternion
 import math
 from glue import *
-import os
 
 #####################
 # BEGIN Global Variable Definitions

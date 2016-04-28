@@ -4,7 +4,8 @@ import Image
 import subprocess
 import pickle
 from ImageProcessing import main as imgmain
-from random import randint
+import random
+from scripts.glue import matrix_to_world_coord
 
 def draw_square(pixels, x, y, w, h, c):
 
@@ -34,42 +35,18 @@ def get_random_grid_cell(matrix):
 	Returns a random empty grid cell
 	'''
 
-	count = 0
-	check = 0
+	available = []
 
 	for row in range(len(matrix)):
 		for col in range(len(matrix[row])):
 
 			if matrix[row][col] == 1:
-				count += 1
+				available.append((col, row))
 
-	r = randint(0, count-1)
-
-	for row in range(len(matrix)):
-		for col in range(len(matrix[row])):
-			check += 1
-			if check == r:
-				rand_row = row
-				rand_col = col
-
-	return (rand_col, rand_row)
+	return random.choice(available)
 
 
-def matrix_to_world_coord(width, height, col, row):
 
-	ros_pos_x = col - int(width/2)
-	ros_pos_y = int(height/2) - row
-
-	if width %2 == 0:
-		ros_pos_x += 0.5
-
-	if height % 2 == 0:
-		ros_pos_y -= 0.5
-
-	ros_pos_x *= 2
-	ros_pos_y *= 2
-
-	return (ros_pos_x, ros_pos_y)
 
 def write_world_file(matrix, sim_name):
 
