@@ -119,7 +119,7 @@ def create_matrix(approx, colorlist):
 		red_color = create_colorlist("red")
 		green_color = create_colorlist("green")
 		
-		for y in range(approx[each][TOP_LEFT][0][Y_POS], approx[each][BOTTOM_RIGHT][0][Y_POS], 10):
+		for y in range(approx[each][TOP_LEFT][0][Y_POS], approx[each][BOTTOM_RIGHT][0][Y_POS]):
 			for x in range(approx[each][TOP_LEFT][0][X_POS], approx[each][BOTTOM_RIGHT][0][X_POS]):
 				pixel = image[x,y]
 				#if pixel is between the values of lower and upper it is red!
