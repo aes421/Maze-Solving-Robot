@@ -85,7 +85,7 @@ def pretty_print(m):
 
 
 
-def create_matrix(approx):
+def create_matrix(approx, colorlist):
 	#if color red (from colorlist) is in between c's x,y coordinates
 		#put 0 in matrix
 	#else
@@ -114,16 +114,24 @@ def create_matrix(approx):
 		#print "Contour ", each, ": y values between: ",approx[each][TOP_LEFT][0][Y_POS], "-", approx[each][BOTTOM_RIGHT][0][Y_POS]
 		#print "x values between: ",approx[each][TOP_LEFT][0][X_POS], "-", approx[each][BOTTOM_RIGHT][0][X_POS], "\n"
 		
-		#probably don't have to check every single pixel... skip a few to speed loop up
+		red_color = create_colorlist("red")
+		green_color = create_colorlist("green")
+		
 		for y in range(approx[each][TOP_LEFT][0][Y_POS], approx[each][BOTTOM_RIGHT][0][Y_POS], 10):
 			for x in range(approx[each][TOP_LEFT][0][X_POS], approx[each][BOTTOM_RIGHT][0][X_POS]):
 				pixel = image[x,y]
 				#if pixel is between the values of lower and upper it is red!
-				if (pixel[0] == 36 and pixel[1] == 28 and pixel[2] == 237):
+				#if (pixel[0] == 36 and pixel[1] == 28 and pixel[2] == 237):
+				if (pixel[0] >= red_color[0][0][0] and pixel[0] <= red_color[0][1][0] and
+					pixel[1] >= red_color[0][0][1] and pixel[1] <= red_color[0][1][1] and
+					pixel[2] >= red_color[0][0][2] and pixel[02] <= red_color[0][1][2]):
 					matrix_row.append(1)
 					found_red = True
 					break
-				if (pixel[0] == 29 and pixel[1] == 230 and pixel[2] == 181):
+				#if (pixel[0] == 29 and pixel[1] == 230 and pixel[2] == 181):
+				if (pixel[0] >= green_color[0][0][0] and pixel[0] <= green_color[0][1][0] and
+					pixel[1] >= green_color[0][0][1] and pixel[1] <= green_color[0][1][1] and
+					pixel[2] >= green_color[0][0][2] and pixel[02] <= green_color[0][1][2]):
 					matrix_row.append(2)
 					found_green = True
 					break
@@ -146,14 +154,14 @@ def create_colorlist(colors):
 	#Add RGB values for each color specified when the function was called
 	#to the list colorlist
 
-	if "blue" in colors:
-		colorlist.append(([100,0,0], [255,100,100]))
+	if "blue" in colors: #204,72, 63
+		colorlist.append(([150,10,10], [255,100,100]))
 	if "white" in colors:
 		colorlist.append(([215, 215, 215], [255, 255, 255]))
-	if "red" in colors:
-		colorlist.append(([0,0,100], [100,100,255]))
-	if "green" in colors:
-		colorlist.append(([0,115,0], [100,255,100]))
+	if "red" in colors:#B = 36 G= 28 R = 237
+		colorlist.append(([0,0,180], [90,80,255]))
+	if "green" in colors:#B =29 G = 230 R = 181
+		colorlist.append(([0,180,130], [80,255,230]))
 
 	return colorlist
 #This function takes an image and a list of colors, it then individually segments out
@@ -203,10 +211,10 @@ image_name = sys.argv[1]
 image = cv2.imread(image_name)
 
 #print (image[243, 140])
-grid, blue = identify_colors(image, "blue")
+grid, colorlist = identify_colors(image, "blue")
 c, approx = extract_cells(grid)
 approx = sort_contours(approx)
-m = create_matrix(approx)
+m = create_matrix(approx, colorlist)
 pretty_print(m)
 
 
