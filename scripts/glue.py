@@ -1,4 +1,5 @@
 from pathingImplementation import *
+import pickle
 
 wall_representation = 0
 path_representation = 1
@@ -103,4 +104,4 @@ def matrix_to_graph(matrix):
 	return graph
 
 
-get_next_cell_based_on_position(get_map_matrix(), 4, 0)
+#get_next_cell_based_on_position(get_map_matrix(), 4, 0)

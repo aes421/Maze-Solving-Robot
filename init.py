@@ -1,6 +1,7 @@
 import sys
 import Image
 import subprocess
+import pickle
 from ImageProcessing import main as imgmain
 
 def draw_square(pixels, x, y, w, h, c):
@@ -22,9 +23,6 @@ def generate_image(matrix, image_name):
 
 			if matrix[row][col] == 0:
 				draw_square(pixels, col*square_dimension, row*square_dimension, square_dimension, square_dimension, (50,50,50))
-
-			if matrix[row][col] == 2:
-				draw_square(pixels, col*square_dimension, row*square_dimension, square_dimension, square_dimension, (0,256,0))
 
 	img.save("launch/"+str(image_name))
 
@@ -48,15 +46,20 @@ def write_world_file(matrix, sim_name):
 	f.write("\nmap\n(\n  name \""+str(sim_name)+"\"\n  size ["+str(matrix_width*2)+" "+str(matrix_height*2)+" 0.5]\n  pose [0 0 0 0]\n  bitmap \""+image_name+"\"\n)\n\n")
 	f.write(second_half)
 
-	# Find the goal in the matrix
+	# Find the goal in the matrix to write to the world config
 	goal = None
 	for row in range(len(matrix)):
 		for col in range(len(matrix[row])):
 			if matrix[row][col] == 2:
 				goal = (row, col)
 
-	if goal is not None:
-		f.write('block(pose['+str(row)+' '+str(col)+' 5 0] color "green")')
+	# If we actually found a goal
+	if goal != None:
+
+		ros_pos_x = goal[1] - int(matrix_width/2)
+		ros_pos_y = int(matrix_height/2) - goal[0]
+
+		f.write('block (pose ['+str(ros_pos_x)+' '+str(ros_pos_y)+' 5 0] color "green")')
 
 	f.close()
 
@@ -84,6 +87,8 @@ if __name__ == '__main__':
 
 	# Build a world file from the matrix
 	write_world_file(sample_matrix, name_of_simulation)
+
+	# Save our maze to a pickle for our ros to use.
 
 	print("Starting Ross...")
 	subprocess.call(["roslaunch MazeSolvingRobot simulation.launch"], shell=True)
