@@ -127,8 +127,8 @@ def get_cell_based_on_posiiton(matrix, x, y):
 	height = len(matrix)
 
 
-	cell_x = x/2.0
-	cell_y = y/2.0
+	cell_x = x/4.0
+	cell_y = y/4.0
 
 	if width % 2 == 0:
 		if cell_x < 0:
@@ -160,15 +160,15 @@ def matrix_to_world_coord(width, height, col, row):
 		if ros_pos_x < 0 :
 			ros_pos_x += .5
 		if ros_pos_x > 0:
-			ros_pos_x +=.5
+			ros_pos_x += .5
 		
 
 	if height % 2 == 0:
 
 		ros_pos_y -= .5
 
-	ros_pos_x *= 2
-	ros_pos_y *= 2
+	ros_pos_x *= 4
+	ros_pos_y *= 4
 
 	return (ros_pos_x, ros_pos_y)
 

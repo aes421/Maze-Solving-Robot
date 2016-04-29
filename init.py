@@ -64,7 +64,7 @@ def write_world_file(matrix, sim_name):
 	f = open('launch/simulation.world', 'w')
 	
 	f.write(first_half)
-	f.write("\nmap\n(\n  name \""+str(sim_name)+"\"\n  size ["+str(matrix_width*2)+" "+str(matrix_height*2)+" 0.5]\n  pose [0 0 0 0]\n  bitmap \""+image_name+"\"\n)\n\n")
+	f.write("\nmap\n(\n  name \""+str(sim_name)+"\"\n  size ["+str(matrix_width*4)+" "+str(matrix_height*4)+" 0.5]\n  pose [0 0 0 0]\n  bitmap \""+image_name+"\"\n)\n\n")
 	f.write(second_half)
 
 	# Find the goal in the matrix to write to the world config
