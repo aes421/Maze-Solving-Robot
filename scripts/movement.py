@@ -235,6 +235,7 @@ def get_pf_magnitude_constant(distance):
 def potential():
     
     global maze_map
+    global robot
     maze_map = get_map_matrix()
 
     rospy.init_node('lab2', anonymous=True) #Initialize the ros node
@@ -242,10 +243,17 @@ def potential():
     rospy.Subscriber("base_scan", LaserScan, laser_callback) #Subscribe to the laser scan topic
     rospy.Subscriber("base_pose_ground_truth", Odometry, robot_callback) #Subscribe to the robot pose topic
 
-    rate = rospy.Rate(10) #10 Hz   
+    rate = rospy.Rate(10) #10 Hz
+
+    cur_step = 0
+
     
     while not rospy.is_shutdown():
         
+        cur_step += 1
+        if cur_step % 50 == 0:
+            generate_astar_image(maze_map, (robot[0], robot[1]), cur_step)
+
         #1. Compute attractive force to goal
         g_force = goal_force()
         

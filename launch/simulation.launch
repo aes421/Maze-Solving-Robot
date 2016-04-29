@@ -1,4 +1,5 @@
 <launch>
 	<node pkg="stage_ros" type="stageros" name="stageros" args="$(find MazeSolvingRobot)/launch/simulation.world" respawn="false" output="screen" />
 	<node name="lab4wf" pkg="MazeSolvingRobot" type="movement.py" output="screen" />
+	<node name="lab4particles" pkg="ai_labs" type="particlefilter.py" args="$(find MazeSolvingRobot)/launch/simulation.world" output="screen" />
 </launch>

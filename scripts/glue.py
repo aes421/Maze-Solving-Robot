@@ -3,10 +3,47 @@ import pickle
 import os
 from os import listdir
 from os.path import isfile, join
+import Image, ImageDraw
 
 wall_representation = 0
 path_representation = 1
 goal_representaiton = 2
+
+
+def draw_square(pixels, x, y, w, h, c):
+
+	for i in range(w):    # for every pixel:
+	    for j in range(h):
+	        pixels[x+i,y+j] = c # set the colour accordingly
+
+def generate_astar_image(matrix, start, step):
+
+	square_dimension = 40
+
+	cur_pos = get_cell_based_on_posiiton(matrix, start[0], start[1])
+	came_from, cost_sofar = a_star_search(matrix_to_graph(matrix), get_goal_in_matrix(matrix), cur_pos)
+
+	print("Generating image..")
+	img = Image.new( 'RGB', (len(matrix[0])*square_dimension,len(matrix)*square_dimension), "white") # create a new black image
+	pixels = img.load() # create the pixel map
+
+
+	for row in range(len(matrix)):
+		for col in range(len(matrix[row])):
+
+			pos = (col, row)
+			if pos in came_from.keys():
+				draw_square(pixels, col*square_dimension, row*square_dimension, square_dimension, square_dimension, (255,0,0))
+
+			if matrix[row][col] == 0:
+				draw_square(pixels, col*square_dimension, row*square_dimension, square_dimension, square_dimension, (50,50,50))
+
+	draw = ImageDraw.Draw(img)
+	
+
+	mypath = os.path.dirname(os.path.abspath(__file__))
+	img.save(str(mypath)+"/astarpath_"+str(step)+".png")
+	print("Image Saved!!!")
 
 
 def get_map_matrix():
@@ -118,7 +155,7 @@ def matrix_to_world_coord(width, height, col, row):
 	ros_pos_x = col - int(width/2)
 	ros_pos_y = int(height/2) - row
 
-	if width % 2 == 0 or True:
+	if width % 2 == 0 :
 		
 		if ros_pos_x < 0 :
 			ros_pos_x += .5
@@ -154,8 +191,6 @@ def get_next_cell_based_on_position(matrix, x, y):
 		return came_from[cur_pos]
 
 	print("Failure grabbing waypoint, defaulting: (0,0)")
-
-	print str(came_from)
 
 	return (0,0)
 
