@@ -95,13 +95,15 @@ def get_cell_based_on_posiiton(matrix, x, y):
 
 	if width % 2 == 0:
 		if cell_x < 0:
-			cell_x -= 0.5
+			cell_x -= .5
+		else:
+			cell_x -= .5
 
 	if height % 2 == 0:
-		cell_y += 0.5
+		cell_y += .5
 
-	cell_x = int(cell_x + (width/2.0))
-	cell_y = int((height/2.0) - cell_y)
+	cell_x = round(cell_x + (width/2.0))
+	cell_y = round((height/2.0) - cell_y)
 
 	cell = (cell_x, cell_y)
 
@@ -116,15 +118,17 @@ def matrix_to_world_coord(width, height, col, row):
 	ros_pos_x = col - int(width/2)
 	ros_pos_y = int(height/2) - row
 
-	if width %2 == 0:
+	if width % 2 == 0 or True:
 		
 		if ros_pos_x < 0 :
-			ros_pos_x += 0.5
+			ros_pos_x += .5
+		if ros_pos_x > 0:
+			ros_pos_x +=.5
 		
 
 	if height % 2 == 0:
 
-		ros_pos_y -= 0.5
+		ros_pos_y -= .5
 
 	ros_pos_x *= 2
 	ros_pos_y *= 2
