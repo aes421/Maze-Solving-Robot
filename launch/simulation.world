@@ -31,7 +31,7 @@ define map model
 map
 (
   name "TEST"
-  size [52 64 0.5]
+  size [24 24 0.5]
   pose [0 0 0 0]
   bitmap "TEST_maze.png"
 )
@@ -63,5 +63,5 @@ define turtlebot position
 )
 
 
-block (pose [25.0 31.0 5 0] color "green")
-turtlebot( pose [25.0 21.0 0 180] color "red")
+block (pose [10.5 -10.5 5 0] color "yellow")
+turtlebot( pose [-1.5 -1.5 0 180] color "black")
