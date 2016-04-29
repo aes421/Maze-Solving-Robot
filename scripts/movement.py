@@ -74,7 +74,7 @@ def drive_from_force(force):
     spin_threshold = math.pi/1
     
     #This is multiplied by the magnitude of the force vector to get the drive forward command
-    drive_multiplier = .85
+    drive_multiplier = .7
     
     #END OF PARAMETERS
     #####################################################
@@ -217,10 +217,10 @@ def get_pf_magnitude_constant(distance):
     #PARAMETERS: MODIFY TO GET THINGS WORKING EFFECTIVELY
         
     #How close to the obstacle do we have to be to begin feeling repulsive force
-    distance_threshold = 7.0 
+    distance_threshold = 1.0
 
     #Strength of the repulsive force
-    strength = 0.9
+    strength = 1.0
 
     #END OF PARAMETERS
     #####################################################
