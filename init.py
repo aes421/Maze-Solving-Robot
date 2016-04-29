@@ -79,14 +79,15 @@ def write_world_file(matrix, sim_name):
 
 		pos = matrix_to_world_coord(matrix_width, matrix_height, goal[1], goal[0])
 
-		block = 'block (pose ['+str(pos[0])+' '+str(pos[1])+' 5 0] color "green")\n'
+		block = 'block (pose ['+str(pos[0])+' '+str(pos[1])+' 5 0] color "yellow")\n'
 		#print(block +" for : "+str(goal))
 		f.write(block)
 
 	rnd_cell = get_random_grid_cell(matrix)
 	spawn_pos = matrix_to_world_coord(matrix_width, matrix_height, rnd_cell[0], rnd_cell[1])
-	f.write('turtlebot( pose ['+str(spawn_pos[0])+' '+str(spawn_pos[1])+' 0 180] color "red")')
-	#f.write ('turtlebot( pose [18 31 0 180] color "red")')
+
+	f.write('turtlebot( pose ['+str(spawn_pos[0])+' '+str(spawn_pos[1])+' 0 180] color "black")')
+	#f.write('turtlebot( pose [0 -29 0 180] color "red")')
 
 	f.close()
 
