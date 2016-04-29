@@ -4,7 +4,7 @@ interval_sim 100 # simulation timestep in milliseconds
 
 window
 ( 
-  size [ 600.000 600.000 ] 
+  size [ 800.000 800.000 ] 
   scale 35.00 
 )
 
@@ -30,10 +30,10 @@ define map model
 
 map
 (
-  name "Halp"
-  size [26 32 0.5]
+  name "TEST"
+  size [16 16 0.5]
   pose [0 0 0 0]
-  bitmap "Halp_maze.png"
+  bitmap "TEST_maze.png"
 )
 
 define hokuyo ranger
@@ -62,4 +62,6 @@ define turtlebot position
   
 )
 
-turtlebot( pose [-5 5 0 180] color "red")
+
+block (pose [-7.0 7.0 5 0] color "green")
+turtlebot( pose [-3.0 3.0 0 180] color "red")

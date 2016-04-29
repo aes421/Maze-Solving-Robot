@@ -24,4 +24,4 @@ define turtlebot position
   
 )
 
-turtlebot( pose [-5 5 0 180] color "red")
+
