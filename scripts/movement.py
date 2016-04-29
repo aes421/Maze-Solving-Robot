@@ -132,7 +132,7 @@ def goal_force( ):
         strength = 0
     print (strength)
 
-    force_to_goal = [math.cos(wrap_angle(angle_for_rotation))*-1*strength, math.sin(wrap_angle(angle_for_rotation))*-1*strength]
+    force_to_goal = [math.cos((angle_for_rotation))*-1*strength, math.sin((angle_for_rotation))*-1*strength]
 
    
     #########################
