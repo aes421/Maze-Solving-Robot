@@ -86,6 +86,7 @@ def write_world_file(matrix, sim_name):
 	rnd_cell = get_random_grid_cell(matrix)
 	spawn_pos = matrix_to_world_coord(matrix_width, matrix_height, rnd_cell[0], rnd_cell[1])
 	f.write('turtlebot( pose ['+str(spawn_pos[0])+' '+str(spawn_pos[1])+' 0 180] color "red")')
+	#f.write ('turtlebot( pose [18 31 0 180] color "red")')
 
 	f.close()
 
