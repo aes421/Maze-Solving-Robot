@@ -74,7 +74,7 @@ def drive_from_force(force):
     spin_threshold = math.pi/1
     
     #This is multiplied by the magnitude of the force vector to get the drive forward command
-    drive_multiplier = .7
+    drive_multiplier = .8
     
     #END OF PARAMETERS
     #####################################################
@@ -91,7 +91,10 @@ def drive_from_force(force):
 
     #Do we just spin
     if abs(force_angle) < spin_threshold:
+        #print ("EXECUTE")
         twist.linear.x = drive_multiplier * force_mag
+        #twist.angular.z = 1
+
 
     return twist
 
@@ -124,9 +127,12 @@ def goal_force( ):
 
     # PART A CODE HERE: 
     angle_for_rotation = (robot[2] - math.atan2(goal_location[1]-robot[1], goal_location[0]-robot[0]))
-    strength = min(math.hypot(goal_location[0]-robot[0], goal_location[1]-robot[1]), strength)
+    strength = 1#min(math.hypot(goal_location[0]-robot[0], goal_location[1]-robot[1]), strength)
+    if goal_location == [robot[0], robot[1]]:
+        strength = 0
+    print (strength)
 
-    force_to_goal = [math.cos(wrap_angle(angle_for_rotation))*-1*strength, math.sin(wrap_angle(angle_for_rotation))*-1*strength]
+    force_to_goal = [math.cos((angle_for_rotation))*-1*strength, math.sin((angle_for_rotation))*-1*strength]
 
    
     #########################
@@ -189,7 +195,7 @@ def get_pf_magnitude_linear(distance):
     distance_threshold = .8
 
     #The maximum strength of the repulsive force
-    max_strength = 0.7
+    max_strength = .7
 
     #END OF PARAMETERS
     #####################################################
@@ -200,8 +206,7 @@ def get_pf_magnitude_linear(distance):
 
     # PART C CODE HERE: 
     if distance < distance_threshold:
-        #print max_strength- (distance/distance_threshold)
-        return ((max_strength - (distance/distance_threshold)) * .8) + .2
+        return ((max_strength - (distance/distance_threshold)) * .8) + 1
 
     #########################
     # LAB 2 PART C : END

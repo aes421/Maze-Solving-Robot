@@ -64,7 +64,7 @@ def write_world_file(matrix, sim_name):
 	f = open('launch/simulation.world', 'w')
 	
 	f.write(first_half)
-	f.write("\nmap\n(\n  name \""+str(sim_name)+"\"\n  size ["+str(matrix_width*2)+" "+str(matrix_height*2)+" 0.5]\n  pose [0 0 0 0]\n  bitmap \""+image_name+"\"\n)\n\n")
+	f.write("\nmap\n(\n  name \""+str(sim_name)+"\"\n  size ["+str(matrix_width*3)+" "+str(matrix_height*3)+" 0.5]\n  pose [0 0 0 0]\n  bitmap \""+image_name+"\"\n)\n\n")
 	f.write(second_half)
 
 	# Find the goal in the matrix to write to the world config
@@ -85,8 +85,9 @@ def write_world_file(matrix, sim_name):
 
 	rnd_cell = get_random_grid_cell(matrix)
 	spawn_pos = matrix_to_world_coord(matrix_width, matrix_height, rnd_cell[0], rnd_cell[1])
+
 	f.write('turtlebot( pose ['+str(spawn_pos[0])+' '+str(spawn_pos[1])+' 0 180] color "black")')
-	#f.write('turtlebot( pose [0 -29 0 180] color "red")')
+	#f.write('turtlebot( pose [30 46 0 180] color "red")')
 
 	f.close()
 
