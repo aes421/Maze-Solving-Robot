@@ -6,6 +6,7 @@ from nav_msgs.msg import *
 from tf.transformations import euler_from_quaternion
 import math
 from glue import *
+import subprocess
 
 #####################
 # BEGIN Global Variable Definitions
@@ -130,7 +131,8 @@ def goal_force( ):
     strength = 1#min(math.hypot(goal_location[0]-robot[0], goal_location[1]-robot[1]), strength)
     if goal_location == [robot[0], robot[1]]:
         strength = 0
-    print (strength)
+        subprocess.call(["rosnode kill -a"], shell=True)
+        #subprocess.call(["roscore kill -a"], shell=True)
 
     force_to_goal = [math.cos((angle_for_rotation))*-1*strength, math.sin((angle_for_rotation))*-1*strength]
 

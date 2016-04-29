@@ -127,3 +127,9 @@ if __name__ == '__main__':
 	print("Starting Ross...")
 	subprocess.call(["roslaunch MazeSolvingRobot simulation.launch"], shell=True)
 	print("Ross Has Ended!")
+
+	mypath = os.path.dirname(os.path.abspath(__file__))
+
+	print("Creating Gif...")
+	subprocess.call(["convert -delay 80 -loop 0 "+str(mypath)+"/scripts/*.png MazeGif.gif"], shell=True)
+	print("Gif is ready")
